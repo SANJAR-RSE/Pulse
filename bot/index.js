@@ -13,6 +13,21 @@ http
   })
   .listen(PORT, () => console.log(`[health] listening on port ${PORT}`));
 
+// Render's free tier spins a web service down after ~15 min with no INBOUND
+// HTTP traffic — but this bot only makes OUTBOUND long-polling calls to
+// Telegram, so without this it goes to sleep between messages and stops
+// polling entirely. A real external HTTP round-trip to our own public URL
+// every 10 minutes keeps it counted as "active" and the bot always-on.
+const SELF_URL = process.env.RENDER_EXTERNAL_URL;
+if (SELF_URL) {
+  setInterval(() => {
+    fetch(SELF_URL).catch(() => {
+      /* best-effort keepalive — a failed ping isn't worth crashing over */
+    });
+  }, 10 * 60 * 1000);
+  console.log(`[keepalive] self-pinging ${SELF_URL} every 10 min`);
+}
+
 const { mainMenu, BUTTONS } = require('./keyboards');
 const { handleStart } = require('./handlers/start');
 const { handleMyQueue } = require('./handlers/queue');
