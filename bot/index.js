@@ -1,5 +1,17 @@
 require('dotenv').config();
+const http = require('http');
 const { Telegraf } = require('telegraf');
+
+// Render's free tier only offers "web service" (expects an open port), not a
+// worker — this tiny server exists purely to satisfy that health check. The
+// actual bot runs on long-polling in the same process, same as any worker.
+const PORT = process.env.PORT || 3002;
+http
+  .createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('PULSE Telegram bot is running.');
+  })
+  .listen(PORT, () => console.log(`[health] listening on port ${PORT}`));
 
 const { mainMenu, BUTTONS } = require('./keyboards');
 const { handleStart } = require('./handlers/start');
