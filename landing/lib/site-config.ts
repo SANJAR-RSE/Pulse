@@ -1,5 +1,5 @@
 export const WEB_URL =
-  process.env.NEXT_PUBLIC_WEB_URL?.trim() || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_WEB_URL?.trim() || "https://pulse-web-delta.vercel.app/";
 
 export const BOT_USERNAME =
   process.env.NEXT_PUBLIC_BOT_USERNAME?.trim() || "pulse_health_bot";

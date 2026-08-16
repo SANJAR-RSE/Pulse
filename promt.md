@@ -54,8 +54,7 @@ Bularning hammasi alohida-alohida feature emas.
 
 ULAR BIR-BIRI BILAN BOG‘LANGAN BIRTA SISTEMA.
 
-================================================== 2. ASOSIY PRODUCT G‘OYA
-==================================================
+# ================================================== 2. ASOSIY PRODUCT G‘OYA
 
 PULSE foydalanuvchining sog‘liq bilan bog‘liq kundalik va tibbiy jarayonlarini bitta joyga birlashtiradi.
 
@@ -80,8 +79,7 @@ Foydalanuvchi PULSE orqali:
 - AI yordamchidan foydalanadi;
 - kerakli paytda emergency information oladi.
 
-================================================== 3. PULSE'NING ENG MUHIM PRINSIPI
-==================================================
+# ================================================== 3. PULSE'NING ENG MUHIM PRINSIPI
 
 BARCHA FUNKSIYALAR BIR-BIRI BILAN BOG‘LANGAN BO‘LSIN.
 
@@ -126,8 +124,7 @@ PULSE AI:
 
 Bitta action boshqa qismlarda ham natija berishi kerak.
 
-================================================== 4. WEB + TELEGRAM — BIRTA SISTEMA
-==================================================
+# ================================================== 4. WEB + TELEGRAM — BIRTA SISTEMA
 
 ENG MUHIM TALAB:
 
@@ -179,8 +176,7 @@ AI:
 
 - backend orqali real PULSE data bilan ishlaydi.
 
-================================================== 5. ACCOUNT SYNC
-==================================================
+# ================================================== 5. ACCOUNT SYNC
 
 User Web'da register qiladi.
 
@@ -216,8 +212,7 @@ Shundan keyin Web va Telegramdagi barcha ma’lumotlar bir xil accountga tegishl
 
 Boshqa userning ma’lumotlari hech qachon ko‘rinmasin.
 
-================================================== 6. WEB'DAGI O‘ZGARISH TELEGRAMGA TA’SIR QILADI
-==================================================
+# ================================================== 6. WEB'DAGI O‘ZGARISH TELEGRAMGA TA’SIR QILADI
 
 Misol:
 
@@ -272,8 +267,7 @@ Web'da appointment avtomatik paydo bo‘ladi.
 
 HECH QANDAY FAKE SYNC QILMANG.
 
-================================================== 7. PULSE MAIN MODULES
-==================================================
+# ================================================== 7. PULSE MAIN MODULES
 
 PULSE quyidagi asosiy modullardan iborat:
 
@@ -302,8 +296,7 @@ PULSE quyidagi asosiy modullardan iborat:
 
 Bularning barchasi bitta PULSE accountga tegishli.
 
-================================================== 8. HEALTH DASHBOARD
-==================================================
+# ================================================== 8. HEALTH DASHBOARD
 
 Dashboard PULSE'ning markaziy sahifasi.
 
@@ -344,8 +337,7 @@ PULSE AI
 
 Dashboard foydalanuvchini har kuni PULSE'ga qaytishga sabab bo‘lsin.
 
-================================================== 9. DAILY HEALTH
-==================================================
+# ================================================== 9. DAILY HEALTH
 
 User kundalik sog‘liq ma’lumotlarini boshqaradi.
 
@@ -389,8 +381,7 @@ Health Score medical diagnosis emas.
 
 U faqat foydalanuvchi kiritgan kundalik activity ma’lumotlari asosidagi umumiy progress ko‘rsatkichi.
 
-================================================== 10. MEDICATION
-==================================================
+# ================================================== 10. MEDICATION
 
 User dori jadvalini qo‘sha oladi.
 
@@ -420,8 +411,7 @@ WEB va TELEGRAM bir xil state ko‘rsatadi.
 
 PULSE o‘zi yangi dori yoki doza tavsiya qilmasin.
 
-================================================== 11. CLINICS
-==================================================
+# ================================================== 11. CLINICS
 
 Ko‘plab realistik demo klinikalar yarating.
 
@@ -449,8 +439,7 @@ Har bir klinikada:
 - doctors;
 - schedules.
 
-================================================== 12. DEPARTMENTS
-==================================================
+# ================================================== 12. DEPARTMENTS
 
 Masalan:
 
@@ -467,8 +456,7 @@ Masalan:
 - Laboratoriya
 - Diagnostika
 
-================================================== 13. DOCTORS
-==================================================
+# ================================================== 13. DOCTORS
 
 Har bir klinikada ko‘plab doctorlar bo‘lsin.
 
@@ -489,8 +477,7 @@ Doctor:
 
 Demo database bo‘sh ko‘rinmasin.
 
-================================================== 14. APPOINTMENT
-==================================================
+# ================================================== 14. APPOINTMENT
 
 User:
 
@@ -514,8 +501,7 @@ Appointment real MongoDB record bo‘lsin.
 
 Fake frontend state yetarli emas.
 
-================================================== 15. DIGITAL QUEUE
-==================================================
+# ================================================== 15. DIGITAL QUEUE
 
 PULSE'ning eng kuchli modullaridan biri.
 
@@ -555,8 +541,7 @@ Frontend fake countdown yaratmasin.
 
 Polling yoki WebSocket ishlatish mumkin.
 
-================================================== 16. DOCTOR PANEL
-==================================================
+# ================================================== 16. DOCTOR PANEL
 
 Doctor:
 
@@ -589,8 +574,7 @@ Web patient dashboard yangilanadi.
 
 Telegram notification yuboriladi.
 
-================================================== 17. TELEGRAM BOT
-==================================================
+# ================================================== 17. TELEGRAM BOT
 
 Technology:
 
@@ -617,8 +601,7 @@ Bot backend API orqali ishlasin.
 
 Bot alohida database ishlatmasin.
 
-================================================== 18. TELEGRAM QUICK MENU
-==================================================
+# ================================================== 18. TELEGRAM QUICK MENU
 
 Masalan:
 
@@ -636,8 +619,7 @@ Masalan:
 
 Telegram bot Web'dagi PULSE account bilan bog‘langan bo‘lishi kerak.
 
-================================================== 19. PULSE AI
-==================================================
+# ================================================== 19. PULSE AI
 
 PULSE AI — butun ecosystemning aqlli yordamchisi.
 
@@ -665,8 +647,7 @@ AI backend orqali real user data oladi.
 
 AI o‘zicha fake data yaratmasin.
 
-================================================== 20. AI EXAMPLES
-==================================================
+# ================================================== 20. AI EXAMPLES
 
 User:
 
@@ -734,8 +715,7 @@ AI:
 
 [ Medical History ]
 
-================================================== 21. AI MEDICAL SAFETY
-==================================================
+# ================================================== 21. AI MEDICAL SAFETY
 
 AI:
 
@@ -755,8 +735,7 @@ Agar jiddiy medical question bo‘lsa:
 
 Keyin PULSE orqali tegishli doctor/department topishga yordam berishi mumkin.
 
-================================================== 22. MEDICAL HISTORY
-==================================================
+# ================================================== 22. MEDICAL HISTORY
 
 Doctor appointmentni completed qilgach:
 
@@ -791,8 +770,7 @@ Recommendation
 
 Faqat shu userning medical data'si ko‘rinsin.
 
-================================================== 23. EMERGENCY
-==================================================
+# ================================================== 23. EMERGENCY
 
 PULSE'da Emergency bo‘limi bo‘lsin.
 
@@ -809,8 +787,7 @@ PULSE emergency diagnosis qilmaydi.
 
 PULSE favqulodda holatda professional yordam chaqirishni tavsiya qiladi.
 
-================================================== 24. HEALTH STATISTICS
-==================================================
+# ================================================== 24. HEALTH STATISTICS
 
 User weekly/monthly statistics ko‘rsin.
 
@@ -838,8 +815,7 @@ Queue average
 
 Bu statistikalar real user data asosida hisoblanadi.
 
-================================================== 25. 1-KUN → 7-KUN EXPERIENCE
-==================================================
+# ================================================== 25. 1-KUN → 7-KUN EXPERIENCE
 
 PULSE foydalanuvchini bir martalik app bo‘lib qolmasin.
 
@@ -902,8 +878,7 @@ User:
 
 Shunday qilib PULSE foydalanuvchining har kungi health companioniga aylanadi.
 
-================================================== 26. DATA MODEL
-==================================================
+# ================================================== 26. DATA MODEL
 
 MongoDB / Mongoose models:
 
@@ -933,8 +908,7 @@ HealthSummary
 
 Relationshiplar Mongoose ref orqali to‘g‘ri tashkil qilinsin.
 
-================================================== 27. BACKEND ARCHITECTURE
-==================================================
+# ================================================== 27. BACKEND ARCHITECTURE
 
 Node.js
 Express.js
@@ -981,8 +955,7 @@ telegram.routes.js
 telegram.controller.js
 telegram.service.js
 
-================================================== 28. WEB STACK
-==================================================
+# ================================================== 28. WEB STACK
 
 Next.js
 App Router
@@ -999,8 +972,7 @@ Mavjud repository stackini avval tekshiring.
 
 Ishlayotgan stackni sababsiz almashtirmang.
 
-================================================== 29. LANDING
-==================================================
+# ================================================== 29. LANDING
 
 Landing PULSE'ni professional startup sifatida ko‘rsatsin.
 
@@ -1030,8 +1002,7 @@ Sections:
 - CTA
 - Footer
 
-================================================== 30. WEB NAVIGATION
-==================================================
+# ================================================== 30. WEB NAVIGATION
 
 Dashboard
 My Health
@@ -1052,8 +1023,7 @@ Emergency
 
 Mobile'da bottom navigation yoki qulay mobile navigation ishlating.
 
-================================================== 31. UI/UX
-==================================================
+# ================================================== 31. UI/UX
 
 PULSE professional medical-tech product ko‘rinishida bo‘lsin.
 
@@ -1083,8 +1053,7 @@ Noaniq buttonlardan foydalanmang.
 
 kabi aniq textlardan foydalaning.
 
-================================================== 32. DESIGN SYSTEM
-==================================================
+# ================================================== 32. DESIGN SYSTEM
 
 Yagona design system.
 
@@ -1115,8 +1084,7 @@ EmptyState
 LoadingState
 ErrorState
 
-================================================== 33. LOADING / ERROR / EMPTY
-==================================================
+# ================================================== 33. LOADING / ERROR / EMPTY
 
 Har bir async action loading holatiga ega.
 
@@ -1134,8 +1102,7 @@ Empty:
 
 Har bir empty state userni keyingi actionga yo‘naltirsin.
 
-================================================== 34. NOTIFICATIONS
-==================================================
+# ================================================== 34. NOTIFICATIONS
 
 Notification system quyidagilar uchun ishlasin:
 
@@ -1151,8 +1118,7 @@ Notification system quyidagilar uchun ishlasin:
 
 Notificationlar Web + Telegram orqali ishlashi mumkin.
 
-================================================== 35. SECURITY
-==================================================
+# ================================================== 35. SECURITY
 
 Majburiy:
 
@@ -1179,8 +1145,7 @@ Frontendga:
 
 chiqmasin.
 
-================================================== 36. ENV
-==================================================
+# ================================================== 36. ENV
 
 .env.example yarating:
 
@@ -1195,8 +1160,7 @@ FRONTEND_URL=
 
 .gitignore ichida bo‘lsin.
 
-================================================== 37. PROJECT STRUCTURE
-==================================================
+# ================================================== 37. PROJECT STRUCTURE
 
 pulse/
 
@@ -1217,8 +1181,7 @@ Web va Telegram bir-birining source code'ini import qilmasin.
 
 Ular backend API orqali bog‘lansin.
 
-================================================== 38. DATABASE SEED
-==================================================
+# ================================================== 38. DATABASE SEED
 
 backend/scripts/seedDatabase.js
 
@@ -1242,8 +1205,7 @@ yarating.
 
 Demo paytida sistema bo‘sh ko‘rinmasin.
 
-================================================== 39. DEMO SCENARIO
-==================================================
+# ================================================== 39. DEMO SCENARIO
 
 Hackathon demo quyidagicha bo‘lsin:
 
@@ -1316,8 +1278,7 @@ ko‘radi.
 
 Bu demo PULSE'ning bitta ecosystem ekanini isbotlashi kerak.
 
-================================================== 40. PULSE ACCOUNT — SINGLE SOURCE OF IDENTITY
-==================================================
+# ================================================== 40. PULSE ACCOUNT — SINGLE SOURCE OF IDENTITY
 
 ENG MUHIM LOGIKALARDAN BIRI:
 
@@ -1342,8 +1303,7 @@ Boshqa-boshqa user system yaratmang.
 
 Telegram linking orqali accountlarni birlashtiring.
 
-================================================== 41. SINGLE SOURCE OF TRUTH
-==================================================
+# ================================================== 41. SINGLE SOURCE OF TRUTH
 
 Barcha ma'lumotlarning yagona manbasi:
 
@@ -1375,8 +1335,7 @@ Backend'dan.
 
 Frontendda hardcoded fake data ishlatmang.
 
-================================================== 42. REAL DATA FLOW
-==================================================
+# ================================================== 42. REAL DATA FLOW
 
 Misol:
 
@@ -1422,8 +1381,7 @@ Dashboard update
 
 Xuddi shu logic Telegramdan action bajarilganda ham ishlasin.
 
-================================================== 43. AI DATA FLOW
-==================================================
+# ================================================== 43. AI DATA FLOW
 
 User:
 
@@ -1463,8 +1421,7 @@ Response
 
 AI hech qachon boshqa user data'sini contextga olmasin.
 
-================================================== 44. HACKATHON QUALITY
-==================================================
+# ================================================== 44. HACKATHON QUALITY
 
 PULSE:
 
@@ -1487,8 +1444,7 @@ Real:
 
 ishlashi kerak.
 
-================================================== 45. FINAL QUALITY CHECK
-==================================================
+# ================================================== 45. FINAL QUALITY CHECK
 
 Ish tugagach quyidagilarni tekshiring:
 
@@ -1579,8 +1535,7 @@ UX
 - accessibility?
 - mobile?
 
-================================================== 46. FINAL PRODUCT
-==================================================
+# ================================================== 46. FINAL PRODUCT
 
 PULSE quyidagi ko‘rinishda ishlashi kerak:
 
@@ -1614,8 +1569,7 @@ PULSE foydalanuvchiga quyidagi hissiyot berishi kerak:
 
 "Men sog‘lig‘im bilan bog‘liq kerakli narsalarni boshqa-boshqa ilovalardan qidirishim shart emas. Hammasi PULSE'da."
 
-================================================== 47. DEVELOPMENT QOIDASI
-==================================================
+# ================================================== 47. DEVELOPMENT QOIDASI
 
 Ishni boshlashdan oldin repositoryni to‘liq tekshiring.
 
