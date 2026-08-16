@@ -1,0 +1,16 @@
+const mongoose = require('mongoose');
+
+async function connectDB() {
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    throw new Error('MONGO_URI is not set. Copy .env.example to .env and fill it in.');
+  }
+  await mongoose.connect(uri);
+  console.log('[db] MongoDB connected');
+}
+
+async function disconnectDB() {
+  await mongoose.disconnect();
+}
+
+module.exports = { connectDB, disconnectDB };
