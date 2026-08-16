@@ -212,6 +212,10 @@ const getStatistics = asyncHandler(async (req, res) => {
     date: { $gte: sinceStr },
   });
 
+  // Approximates time-in-queue from real timestamps (joined -> called/done) —
+  // no synthetic constant, since that would misrepresent an actual metric.
+  const queueMinutes = queues.map((q) => Math.max(0, Math.round((q.updatedAt - q.createdAt) / 60000)));
+
   res.json({
     waterLiters: +(waterLogs.reduce((s, l) => s + l.amountMl, 0) / 1000).toFixed(1),
     sleepHours: Math.round(sleepLogs.reduce((s, l) => s + l.durationMinutes, 0) / 60),
@@ -222,7 +226,9 @@ const getStatistics = asyncHandler(async (req, res) => {
         : Math.round((medicationLogs.filter((l) => l.taken).length / medicationLogs.length) * 100),
     appointments: appointments.length,
     queueAverageMinutes:
-      queues.length === 0 ? null : Math.round((queues.length * 15) / queues.length),
+      queueMinutes.length === 0
+        ? null
+        : Math.round(queueMinutes.reduce((s, m) => s + m, 0) / queueMinutes.length),
   });
 });
 
