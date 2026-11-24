@@ -8,6 +8,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const { createQueueEntry } = require('../services/queue.service');
 const { getAvailableSlots } = require('../services/slot.service');
 const { notify } = require('../services/notification.service');
+const { emitToUser, emitQueueChanged } = require('../realtime');
 
 const createSchema = z.object({
   doctorId: z.string().refine((v) => mongoose.isValidObjectId(v), 'Shifokor identifikatori noto\'g\'ri.'),
@@ -64,6 +65,11 @@ const createAppointment = asyncHandler(async (req, res) => {
     `Sizning navbatingiz tasdiqlandi: ${queue.code} (${date} ${time}).`
   );
 
+  // Live: the doctor's panel shows the new patient, everyone in that queue
+  // re-reads their position, and the booker's other tabs/devices refresh.
+  emitToUser(req.user._id, 'appointments:changed', { reason: 'booked' });
+  await emitQueueChanged(doctor._id, date, 'booked');
+
   res.status(201).json({ appointment, queue });
 });
 
@@ -89,6 +95,9 @@ const cancelAppointment = asyncHandler(async (req, res) => {
   await Queue.findOneAndUpdate({ appointment: appointment._id }, { status: 'CANCELLED' });
 
   await notify(req.user._id, 'appointment_cancelled', 'Navbat bekor qilindi', 'Sizning navbatingiz bekor qilindi.');
+
+  emitToUser(req.user._id, 'appointments:changed', { reason: 'cancelled' });
+  await emitQueueChanged(appointment.doctor, appointment.date, 'cancelled');
 
   res.json({ appointment });
 });

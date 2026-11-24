@@ -7,6 +7,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const { callNext, SERVE_ORDER } = require('../services/queue.service');
 const { notify } = require('../services/notification.service');
 const { todayStr } = require('../utils/date');
+const { emitToUser, emitQueueChanged } = require('../realtime');
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 function pickDate(value) {
@@ -39,6 +40,8 @@ const callNextPatient = asyncHandler(async (req, res) => {
   const date = pickDate(req.body?.date);
 
   const result = await callNext(req.user.doctor, date);
+  // Every patient in this queue moves up — push it to all of them live.
+  await emitQueueChanged(req.user.doctor, date, 'called');
   res.json(result);
 });
 
@@ -100,6 +103,10 @@ const completeAppointment = asyncHandler(async (req, res) => {
     'Ko\'rik yakunlandi',
     'Sizning ko\'rikingiz yakunlandi. Natijalar Medical History bo\'limida.'
   );
+
+  emitToUser(appointment.patient, 'records:changed', { recordId: String(record._id) });
+  emitToUser(appointment.patient, 'appointments:changed', { reason: 'completed' });
+  await emitQueueChanged(appointment.doctor, appointment.date, 'completed');
 
   res.status(201).json({ record });
 });

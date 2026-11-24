@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useRealtimeStatus } from "@/lib/realtime";
 import type {
   DashboardData,
   Medication,
@@ -10,10 +11,12 @@ import type {
 } from "@/lib/types";
 
 export function useDashboard() {
+  const live = useRealtimeStatus() === "live";
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: async () => (await api.get<DashboardData>("/health/dashboard")).data,
-    refetchInterval: 30_000,
+    // Pushed live over the socket; polling is only the offline fallback.
+    refetchInterval: live ? false : 30_000,
   });
 }
 

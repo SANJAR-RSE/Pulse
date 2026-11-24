@@ -61,6 +61,12 @@ const connect = asyncHandler(async (req, res) => {
   );
 
   await User.findByIdAndUpdate(linkCode.user, { telegramId: tgId });
+
+  // The Web profile flips to "Telegram ulangan" the moment the bot confirms;
+  // an account that just lost this Telegram is told too.
+  const { emitToUser } = require('../realtime');
+  emitToUser(linkCode.user, 'account:changed', { telegramLinked: true });
+  for (const c of previous) emitToUser(c.user, 'account:changed', { telegramLinked: false });
   await linkCode.deleteOne();
 
   const user = await User.findById(linkCode.user);

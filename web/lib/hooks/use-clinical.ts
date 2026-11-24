@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useRealtimeStatus } from "@/lib/realtime";
 import type {
   Appointment,
   Clinic,
@@ -100,12 +101,14 @@ export function useCancelAppointment() {
 }
 
 export function useQueueStatus(appointmentId: string | undefined) {
+  const live = useRealtimeStatus() === "live";
   return useQuery({
     queryKey: ["queue", appointmentId],
     queryFn: async () =>
       (await api.get<QueueStatus>(`/queue/${appointmentId}`)).data,
     enabled: !!appointmentId,
-    refetchInterval: 15_000,
+    // Pushed live over the socket; polling is only the offline fallback.
+    refetchInterval: live ? false : 15_000,
   });
 }
 

@@ -221,15 +221,29 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 {data.queue ? (
-                  <div className="space-y-1">
-                    <p className="text-lg font-semibold">{data.queue.code}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Oldingizda: {data.queue.aheadCount} kishi
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Taxminiy kutish: {data.queue.estimatedWaitMinutes} daqiqa
-                    </p>
-                  </div>
+                  data.queue.status === "CALLED" ? (
+                    <div className="space-y-1 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-100">
+                      <p className="text-lg font-semibold">{data.queue.code} — navbatingiz keldi!</p>
+                      <p className="text-sm">Iltimos, shifokor xonasiga boring.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="flex items-center gap-2 text-lg font-semibold">
+                        {data.queue.code}
+                        {data.queue.status === "NEAR" && (
+                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+                            Navbatingiz yaqin
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Oldingizda: {data.queue.aheadCount} kishi
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Taxminiy kutish: {data.queue.estimatedWaitMinutes} daqiqa
+                      </p>
+                    </div>
+                  )
                 ) : (
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">

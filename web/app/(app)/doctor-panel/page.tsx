@@ -15,6 +15,7 @@ import { ErrorState } from "@/components/shared/error-state";
 import { EmptyState } from "@/components/shared/empty-state";
 import { CompleteExaminationDialog } from "@/components/doctor-panel/complete-examination-dialog";
 import type { DoctorPanelQueueEntry } from "@/lib/types";
+import { LiveIndicator } from "@/lib/realtime";
 
 const STATUS_LABEL: Record<DoctorPanelQueueEntry["status"], string> = {
   WAITING: "Kutmoqda",
@@ -74,7 +75,10 @@ export default function DoctorPanelPage() {
             <ClipboardList className="h-6 w-6 text-primary" />
             Shifokor paneli
           </h1>
-          <p className="text-sm text-muted-foreground">Bugungi navbatlaringiz.</p>
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            Bugungi navbatlaringiz.
+            <LiveIndicator />
+          </p>
         </div>
         <Button className="gap-1.5" disabled={callNext.isPending} onClick={handleCallNext}>
           {callNext.isPending ? (

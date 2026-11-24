@@ -1,8 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useRealtimeStatus } from "@/lib/realtime";
 import type { DoctorPanelQueueEntry, LabResult } from "@/lib/types";
 
 export function useDoctorQueue(date?: string) {
+  const live = useRealtimeStatus() === "live";
   return useQuery({
     queryKey: ["doctor-panel-queue", date],
     queryFn: async () =>
@@ -11,7 +13,8 @@ export function useDoctorQueue(date?: string) {
           params: date ? { date } : undefined,
         })
       ).data,
-    refetchInterval: 15_000,
+    // Pushed live over the socket; polling is only the offline fallback.
+    refetchInterval: live ? false : 15_000,
   });
 }
 

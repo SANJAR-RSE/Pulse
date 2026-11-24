@@ -37,10 +37,19 @@ const STATUS_VARIANT: Record<Appointment["status"], "default" | "secondary" | "d
 function AppointmentQueueBadge({ appointmentId }: { appointmentId: string }) {
   const queue = useQueueStatus(appointmentId);
   if (!queue.data) return null;
+  const q = queue.data;
+  if (q.status === "CALLED") {
+    return (
+      <div className="flex items-center gap-1.5 rounded-lg bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+        <Users className="h-3.5 w-3.5" />
+        {q.code} · Navbatingiz keldi!
+      </div>
+    );
+  }
   return (
     <div className="flex items-center gap-1.5 rounded-lg bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
       <Users className="h-3.5 w-3.5" />
-      {queue.data.code} · Oldingizda {queue.data.aheadCount} kishi
+      {q.code} · {q.status === "NEAR" ? "Navbatingiz yaqin · " : ""}Oldingizda {q.aheadCount} kishi
     </div>
   );
 }

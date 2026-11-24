@@ -6,6 +6,7 @@ import { Activity, LogOut, Menu } from "lucide-react";
 import { NAV_ITEMS } from "@/lib/nav";
 import { useAuthStore } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
+import { LiveIndicator } from "@/lib/realtime";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ export function MobileHeader() {
         </div>
         <span className="font-semibold tracking-tight">PULSE</span>
       </Link>
+      <LiveIndicator className="ml-auto mr-1" />
 
       <DropdownMenu>
         <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
