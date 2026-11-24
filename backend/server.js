@@ -2,6 +2,7 @@ require('dotenv').config();
 const http = require('http');
 const app = require('./app');
 const { initRealtime } = require('./realtime');
+const { startReminderScheduler } = require('./services/reminder.service');
 const { connectDB } = require('./config/db');
 
 const PORT = process.env.PORT || 4000;
@@ -35,6 +36,7 @@ async function start() {
     const server = http.createServer(app);
     initRealtime(server);
     server.listen(PORT, () => console.log(`[server] PULSE backend running on port ${PORT}`));
+    startReminderScheduler();
     startKeepalive();
   } catch (err) {
     console.error('[server] Failed to start:', err);

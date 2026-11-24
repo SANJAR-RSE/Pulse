@@ -4,7 +4,9 @@ const axios = require('axios');
 // notifications work even if the bot process is briefly down — the bot
 // process only needs to be up to receive inbound commands. Single source of
 // truth stays the backend + MongoDB either way.
-async function sendTelegramMessage(chatId, text) {
+// `replyMarkup` (optional) attaches inline buttons, e.g. "✅ Ichdim" on a
+// medication reminder — handled by the bot's existing callback handlers.
+async function sendTelegramMessage(chatId, text, replyMarkup) {
   const token = process.env.BOT_TOKEN;
   if (!token || !chatId) return; // no Telegram linked / not configured — never throw, just skip
 
@@ -13,6 +15,7 @@ async function sendTelegramMessage(chatId, text) {
       chat_id: chatId,
       text,
       parse_mode: 'HTML',
+      ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
     });
   } catch (err) {
     console.error('[telegram] sendMessage failed:', err.response?.data || err.message);

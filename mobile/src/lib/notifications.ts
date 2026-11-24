@@ -4,19 +4,22 @@ import { AndroidImportance } from 'expo-notifications';
 import { AppState, Platform } from 'react-native';
 
 // Phone-level notifications for the moments that matter (queue called /
-// near). Inside the app an in-app banner is shown instead; the system
-// notification is used only while the app is in the background.
+// near, medication time). Inside the app an in-app banner is shown instead;
+// the system notification is for when the app is in the background/closed.
 
-const CHANNEL = 'pulse-queue';
+const QUEUE_CHANNEL = 'pulse-queue';
+export const MED_CHANNEL = 'pulse-medication';
 let ready = false;
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
+  handleNotification: async (notification) => {
+    // A scheduled medication reminder firing while the app is open: the
+    // live in-app banner (with "Ichdim") already covers it — no duplicate.
+    const isMed = notification.request.identifier.startsWith('pulse-med-');
+    const foreground = AppState.currentState === 'active';
+    const show = !(isMed && foreground);
+    return { shouldPlaySound: show, shouldSetBadge: false, shouldShowBanner: show, shouldShowList: true };
+  },
 });
 
 export async function setupNotifications() {
@@ -24,10 +27,16 @@ export async function setupNotifications() {
   try {
     // Android 13+ only shows the permission prompt once a channel exists.
     if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync(CHANNEL, {
-        name: 'Navbat va eslatmalar',
+      await Notifications.setNotificationChannelAsync(QUEUE_CHANNEL, {
+        name: 'Navbat',
         importance: AndroidImportance.MAX,
         vibrationPattern: [0, 300, 150, 300],
+        lightColor: '#2570F4',
+      });
+      await Notifications.setNotificationChannelAsync(MED_CHANNEL, {
+        name: 'Dori eslatmalari',
+        importance: AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
         lightColor: '#2570F4',
       });
     }
@@ -47,8 +56,8 @@ export async function notifyDevice(title: string, body: string, urgent = false) 
     if (AppState.currentState === 'active') return; // in-app banner covers it
     await Notifications.scheduleNotificationAsync({
       content: { title, body, sound: true },
-      // Immediate delivery; on Android routed through our high-priority channel.
-      trigger: Platform.OS === 'android' ? { channelId: CHANNEL } : null,
+      // Immediate delivery; on Android routed through the high-priority channel.
+      trigger: Platform.OS === 'android' ? { channelId: QUEUE_CHANNEL } : null,
     });
   } catch {
     /* never let a notification failure break the app */

@@ -3,6 +3,7 @@ import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { BackgroundSync } from '@/components/background-sync';
 import { ToastProvider } from '@/components/ui/toast';
 import { useAuth } from '@/lib/auth-store';
 import { RealtimeProvider } from '@/lib/realtime';
@@ -50,6 +51,7 @@ export default function RootLayout() {
         <ToastProvider>
           <RealtimeProvider>
             <StatusBar style="dark" />
+            {signedIn && <BackgroundSync />}
             <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
               <Stack.Protected guard={!signedIn}>
                 <Stack.Screen name="(auth)" />

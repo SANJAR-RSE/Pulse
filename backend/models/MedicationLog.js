@@ -7,6 +7,8 @@ const medicationLogSchema = new mongoose.Schema(
     date: { type: String, required: true }, // YYYY-MM-DD
     taken: { type: Boolean, default: false },
     takenAt: { type: Date },
+    // Set once the daily reminder went out — guarantees one reminder per day.
+    remindedAt: { type: Date },
   },
   { timestamps: true }
 );

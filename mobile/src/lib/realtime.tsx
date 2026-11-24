@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { io, type Socket } from 'socket.io-client';
@@ -44,8 +45,33 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     socket.on('disconnect', () => setState('connecting'));
     socket.on('connect_error', () => setState('offline'));
 
-    socket.on('notification:new', (n: { type: string; title: string; message: string }) => {
+    socket.on('notification:new', (n: { type: string; title: string; message: string; meta?: { medicationId?: string } }) => {
       refresh('notifications', 'dashboard');
+      if (n.type === 'medication_reminder') {
+        refresh('medications');
+        // In the background the phone's own scheduled reminder shows it.
+        if (AppState.currentState !== 'active') return;
+        const medId = n.meta?.medicationId;
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        toast({
+          type: 'warning',
+          title: `💊 ${n.title}`,
+          message: n.message,
+          duration: 30_000,
+          action: medId
+            ? {
+                label: 'Ichdim',
+                onPress: () => {
+                  api
+                    .post(`/health/medications/${medId}/taken`)
+                    .then(() => toast({ type: 'success', title: 'Dori qabul qilindi' }))
+                    .catch(() => toast({ type: 'error', title: "Dorini belgilab bo'lmadi." }));
+                },
+              }
+            : undefined,
+        });
+        return;
+      }
       if (n.type === 'queue_called') {
         toast({ type: 'success', title: n.title, message: n.message, duration: 15_000 });
         void notifyDevice(n.title, n.message, true);

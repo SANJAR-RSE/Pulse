@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api, errorMessage, setUnauthorizedHandler, tokenStore } from './api';
+import { cancelMedicationReminders, resetMedicationReminderCache } from './med-reminders';
 import type { User } from './types';
 
 type Status = 'loading' | 'authenticated' | 'unauthenticated';
@@ -62,6 +63,9 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   logout: async () => {
+    // The next person on this phone must not get this user's reminders.
+    await cancelMedicationReminders();
+    resetMedicationReminderCache();
     await tokenStore.clear();
     set({ user: null, status: 'unauthenticated' });
   },

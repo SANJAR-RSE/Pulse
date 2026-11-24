@@ -17,7 +17,9 @@ function minutesToTime(min) {
 // PULSE AI, so none of them can ever disagree with each other.
 //   - past dates and non-working days -> no slots
 //   - today: times that already passed (app timezone) are excluded
-//   - active (pending/confirmed) appointments occupy their slot
+//   - every ACTIVE appointment occupies its slot (pending, confirmed AND
+//     completed — a visit finished early still owns that time). This is the
+//     exact rule of the unique index, so "shown free" always means "bookable".
 async function getAvailableSlots(doctor, date) {
   const today = todayStr();
   if (date < today) return [];
@@ -28,7 +30,7 @@ async function getAvailableSlots(doctor, date) {
   const now = date === today ? nowTimeStr() : null;
 
   const booked = new Set(
-    await Appointment.find({ doctor: doctor._id, date, status: { $in: ['pending', 'confirmed'] } }).distinct('time')
+    await Appointment.find({ doctor: doctor._id, date, active: true }).distinct('time')
   );
 
   const slots = [];

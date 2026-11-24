@@ -10,6 +10,7 @@ interface ToastInput {
   title: string;
   message?: string;
   duration?: number;
+  action?: { label: string; onPress: () => void };
 }
 interface ToastItem extends ToastInput {
   id: number;
@@ -74,6 +75,18 @@ function ToastBanner({ toast, onDone }: { toast: ToastItem; onDone: () => void }
           <Text style={styles.title}>{toast.title}</Text>
           {!!toast.message && <Text style={styles.message}>{toast.message}</Text>}
         </View>
+        {toast.action && (
+          <Pressable
+            onPress={() => {
+              toast.action?.onPress();
+              hide();
+            }}
+            style={[styles.action, { backgroundColor: s.fg }]}
+            hitSlop={6}
+          >
+            <Text style={styles.actionText}>{toast.action.label}</Text>
+          </Pressable>
+        )}
       </Pressable>
     </Animated.View>
   );
@@ -96,4 +109,6 @@ const styles = StyleSheet.create({
   iconWrap: { width: 36, height: 36, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 15, fontWeight: '600', color: colors.text },
   message: { fontSize: 13, color: colors.muted, marginTop: 2 },
+  action: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: radius.md },
+  actionText: { color: colors.white, fontWeight: '700', fontSize: 13 },
 });

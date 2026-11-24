@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { io, type Socket } from "socket.io-client";
 import { toast } from "sonner";
-import { API_URL, getToken } from "@/lib/api";
+import { API_URL, api, getApiErrorMessage, getToken } from "@/lib/api";
 import { useAuthStore } from "@/lib/auth-store";
 import type { User } from "@/lib/types";
 
@@ -26,6 +26,7 @@ interface IncomingNotification {
   type: string;
   title: string;
   message: string;
+  meta?: { medicationId?: string };
 }
 
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
@@ -70,6 +71,25 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== "undefined" && "vibrate" in navigator) navigator.vibrate?.([200, 100, 200]);
       } else if (n.type === "queue_near") {
         toast.warning(n.title, { description: n.message, duration: 15_000 });
+      } else if (n.type === "medication_reminder" && n.meta?.medicationId) {
+        // "Vitamin D ichish vaqti keldi" — mark it taken right from the toast.
+        const medId = n.meta.medicationId;
+        toast(`💊 ${n.title}`, {
+          description: n.message,
+          duration: 60_000,
+          action: {
+            label: "Ichdim",
+            onClick: async () => {
+              try {
+                await api.post(`/health/medications/${medId}/taken`);
+                toast.success("Dori qabul qilindi.");
+              } catch (err) {
+                toast.error(getApiErrorMessage(err, "Dorini belgilab bo'lmadi."));
+              }
+            },
+          },
+        });
+        refresh("medications");
       } else {
         toast(n.title, { description: n.message });
       }
