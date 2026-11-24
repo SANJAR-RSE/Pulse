@@ -29,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <QueryProvider>
           {children}
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-center" closeButton />
         </QueryProvider>
       </body>
     </html>
