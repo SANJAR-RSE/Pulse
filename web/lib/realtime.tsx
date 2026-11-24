@@ -115,29 +115,3 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
   return <RealtimeContext.Provider value={state}>{children}</RealtimeContext.Provider>;
 }
-
-// Small "Live" badge so the doctor/patient can trust what they see.
-export function LiveIndicator({ className = "" }: { className?: string }) {
-  const s = useRealtimeStatus();
-  const label = s === "live" ? "Jonli" : s === "connecting" ? "Ulanmoqda…" : "Oflayn";
-  const color =
-    s === "live" ? "bg-emerald-500" : s === "connecting" ? "bg-amber-400" : "bg-muted-foreground/50";
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground ${className}`}
-      title={
-        s === "live"
-          ? "Ma'lumotlar real vaqtda yangilanmoqda"
-          : "Real vaqt aloqasi yo'q — ma'lumotlar vaqti-vaqti bilan yangilanadi"
-      }
-    >
-      <span className="relative flex h-2 w-2">
-        {s === "live" && (
-          <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${color} opacity-60`} />
-        )}
-        <span className={`relative inline-flex h-2 w-2 rounded-full ${color}`} />
-      </span>
-      {label}
-    </span>
-  );
-}

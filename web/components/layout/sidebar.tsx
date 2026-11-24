@@ -8,8 +8,6 @@ import { useAuthStore } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { LiveIndicator } from "@/lib/realtime";
-
 export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
@@ -34,7 +32,6 @@ export function Sidebar() {
           <Activity className="h-4.5 w-4.5" />
         </div>
         <span className="text-lg font-semibold tracking-tight">PULSE</span>
-        <LiveIndicator className="ml-auto" />
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
