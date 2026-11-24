@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Alert, FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { confirmAction } from '@/lib/confirm';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Badge, Button, Card, EmptyState, ErrorState, LoadingState } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
@@ -32,21 +33,19 @@ export default function AppointmentsScreen() {
   });
 
   const askCancel = (a: Appointment) =>
-    Alert.alert('Navbatni bekor qilish', `${prettyDate(a.date)} · ${a.time} — Dr. ${a.doctor?.firstName} ${a.doctor?.lastName}. Bekor qilasizmi?`, [
-      { text: "Yo'q", style: 'cancel' },
-      {
-        text: 'Bekor qilish',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await cancel.mutateAsync(a._id);
-            toast({ type: 'success', title: 'Navbat bekor qilindi' });
-          } catch (e) {
-            toast({ type: 'error', title: errorMessage(e, "Navbatni bekor qilib bo'lmadi.") });
-          }
-        },
-      },
-    ]);
+    confirmAction(
+      'Navbatni bekor qilish',
+      `${prettyDate(a.date)} · ${a.time} — Dr. ${a.doctor?.firstName} ${a.doctor?.lastName}. Bekor qilasizmi?`,
+      'Bekor qilish',
+      async () => {
+        try {
+          await cancel.mutateAsync(a._id);
+          toast({ type: 'success', title: 'Navbat bekor qilindi' });
+        } catch (e) {
+          toast({ type: 'error', title: errorMessage(e, "Navbatni bekor qilib bo'lmadi.") });
+        }
+      }
+    );
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}>

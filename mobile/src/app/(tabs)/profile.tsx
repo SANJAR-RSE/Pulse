@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
-import { Alert, Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
+import { confirmAction } from '@/lib/confirm';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar, Badge, Button, Card, Row, Screen } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
@@ -31,11 +32,7 @@ export default function ProfileScreen() {
     }
   };
 
-  const confirmLogout = () =>
-    Alert.alert('Hisobdan chiqish', 'Rostdan ham chiqmoqchimisiz?', [
-      { text: 'Bekor qilish', style: 'cancel' },
-      { text: 'Chiqish', style: 'destructive', onPress: () => void logout() },
-    ]);
+  const confirmLogout = () => confirmAction('Hisobdan chiqish', 'Rostdan ham chiqmoqchimisiz?', 'Chiqish', () => void logout());
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: colors.bg }}>

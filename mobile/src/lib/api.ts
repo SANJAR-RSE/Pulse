@@ -1,5 +1,6 @@
 import { create, isAxiosError } from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 // Static dot access is required for Expo to inline EXPO_PUBLIC_ vars.
 export const API_URL = (process.env.EXPO_PUBLIC_API_URL || 'https://pulse-backend-co87.onrender.com/api').replace(/\/$/, '');
@@ -12,19 +13,30 @@ const TOKEN_KEY = 'pulse_token';
 // avoids an async keystore read on every request.
 let token: string | null = null;
 
+// SecureStore (OS keystore) on phones; localStorage on web, where the
+// keystore doesn't exist (web build is used for previews and UI tests).
+const store =
+  Platform.OS === 'web'
+    ? {
+        get: async (k: string) => globalThis.localStorage?.getItem(k) ?? null,
+        set: async (k: string, v: string) => globalThis.localStorage?.setItem(k, v),
+        del: async (k: string) => globalThis.localStorage?.removeItem(k),
+      }
+    : { get: SecureStore.getItemAsync, set: SecureStore.setItemAsync, del: SecureStore.deleteItemAsync };
+
 export const tokenStore = {
   get: () => token,
   async load() {
-    token = await SecureStore.getItemAsync(TOKEN_KEY);
+    token = await store.get(TOKEN_KEY);
     return token;
   },
   async set(value: string) {
     token = value;
-    await SecureStore.setItemAsync(TOKEN_KEY, value);
+    await store.set(TOKEN_KEY, value);
   },
   async clear() {
     token = null;
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await store.del(TOKEN_KEY);
   },
 };
 

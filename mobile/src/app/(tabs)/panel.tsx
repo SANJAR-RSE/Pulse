@@ -109,9 +109,15 @@ export default function DoctorPanelScreen() {
         }
         renderItem={({ item: q }) => {
           const s = STATUS[q.status];
-          const faded = q.status === 'COMPLETED' || q.status === 'CANCELLED';
+          // Moved on with "Keyingi bemor" before the exam was written: the
+          // visit must still be able to get its record / prescriptions.
+          const needsRecord = q.status === 'COMPLETED' && !q.hasRecord && !!q.appointment;
+          const faded = (q.status === 'COMPLETED' && !needsRecord) || q.status === 'CANCELLED';
           return (
-            <Card style={[styles.item, faded && { opacity: 0.6 }, q.status === 'CALLED' && { borderColor: colors.success }]}>
+            <Card
+              onPress={needsRecord ? () => setExam({ appointmentId: q.appointment._id, patientName: q.patient?.name ?? '' }) : undefined}
+              style={[styles.item, faded && { opacity: 0.6 }, q.status === 'CALLED' && { borderColor: colors.success }, needsRecord && { borderColor: colors.warning }]}
+            >
               <View style={styles.codeBox}>
                 <Text style={styles.code}>{q.code}</Text>
               </View>
@@ -123,7 +129,7 @@ export default function DoctorPanelScreen() {
                   <Text style={font.small}>{q.appointment?.time}</Text>
                 </View>
               </View>
-              <Badge label={s.label} tone={s.tone} />
+              {needsRecord ? <Badge label="Xulosa yozish" tone="warning" icon="create-outline" /> : <Badge label={s.label} tone={s.tone} />}
             </Card>
           );
         }}

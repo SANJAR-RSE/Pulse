@@ -42,9 +42,11 @@ const selectCls =
 export function CompleteExaminationDialog({
   appointmentId,
   patientName,
+  label,
 }: {
   appointmentId: string;
   patientName: string;
+  label?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [examination, setExamination] = useState("");
@@ -101,9 +103,9 @@ export function CompleteExaminationDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" className="gap-1.5" />}>
+      <DialogTrigger render={<Button size="sm" variant={label ? "outline" : "default"} className="gap-1.5" />}>
         <ClipboardCheck className="h-3.5 w-3.5" />
-        Ko&apos;rikni yakunlash
+        {label ?? "Ko'rikni yakunlash"}
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>

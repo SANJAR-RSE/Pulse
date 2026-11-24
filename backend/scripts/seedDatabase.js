@@ -31,8 +31,18 @@ const CLINICS = [
   { name: 'Healthy Life Clinic', address: 'Yashnobod tumani, Toshkent', phone: '+998 71 200 80 80' },
 ];
 
-const FIRST_NAMES = ['Aziz', 'Dilnoza', 'Bekzod', 'Malika', 'Sardor', 'Nilufar', 'Jasur', 'Zarina', 'Otabek', 'Feruza', 'Sanjar', 'Gulnora'];
-const LAST_NAMES = ['Aliyev', 'Karimova', 'Yusupov', 'Rashidova', 'Tashkentov', 'Nazarova', 'Yoldashev', 'Ismoilova', 'Rahimov', 'Sodiqova', 'Mirzayev', 'Ergasheva'];
+// 20 UNIQUE doctor names (one per seeded doctor). Cycling 12 first/last
+// names used to produce two identical "Dr. Aziz Aliyev, LOR" in different
+// clinics — confusing in a demo and easy to book the wrong one.
+const DOCTOR_NAMES = [
+  ['Aziz', 'Aliyev'], ['Dilnoza', 'Karimova'], ['Bekzod', 'Yusupov'], ['Malika', 'Rashidova'],
+  ['Sardor', 'Tashkentov'], ['Nilufar', 'Nazarova'], ['Jasur', "Yo'ldoshev"], ['Zarina', 'Ismoilova'],
+  ['Otabek', 'Rahimov'], ['Feruza', 'Sodiqova'], ['Sherzod', 'Mirzayev'], ['Gulnora', 'Ergasheva'],
+  ['Javohir', 'Umarov'], ['Kamola', 'Qodirova'], ['Rustam', 'Xolmatov'], ['Madina', 'Saidova'],
+  ['Shoxrux', 'Abdullayev'], ['Lola', 'Tursunova'], ['Ulugbek', 'Nematov'], ['Nodira', 'Hasanova'],
+];
+const FIRST_NAMES = DOCTOR_NAMES.map((n) => n[0]);
+const LAST_NAMES = DOCTOR_NAMES.map((n) => n[1]);
 
 function pick(arr, i) {
   return arr[i % arr.length];

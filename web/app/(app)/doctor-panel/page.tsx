@@ -131,12 +131,15 @@ export default function DoctorPanelPage() {
 
                 <div className="flex items-center gap-2">
                   <Badge variant={STATUS_VARIANT[q.status]}>{STATUS_LABEL[q.status]}</Badge>
-                  {q.status === "CALLED" && q.appointment && (
+                  {/* Current patient — or one already moved on without an exam
+                      record (so prescriptions can still be written). */}
+                  {q.appointment && (q.status === "CALLED" || (q.status === "COMPLETED" && !q.hasRecord)) && (
                     <CompleteExaminationDialog
                       appointmentId={
                         typeof q.appointment === "string" ? q.appointment : q.appointment._id
                       }
                       patientName={q.patient?.name ?? ""}
+                      label={q.status === "CALLED" ? undefined : "Xulosa yozish"}
                     />
                   )}
                 </div>

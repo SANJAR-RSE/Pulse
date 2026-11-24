@@ -68,7 +68,10 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
       if (n.type === "queue_called") {
         // The one moment that must not be missed.
         toast.success(n.title, { description: n.message, duration: 30_000 });
-        if (typeof window !== "undefined" && "vibrate" in navigator) navigator.vibrate?.([200, 100, 200]);
+        // Browsers block (and log an error for) vibrate before the user has
+        // interacted with the page — only buzz when it's allowed.
+        const ua = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
+        if ("vibrate" in navigator && (!ua || ua.hasBeenActive)) navigator.vibrate?.([200, 100, 200]);
       } else if (n.type === "queue_near") {
         toast.warning(n.title, { description: n.message, duration: 15_000 });
       } else if (n.type === "medication_reminder" && n.meta?.medicationId) {

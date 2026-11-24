@@ -30,10 +30,18 @@ const getTodayQueue = asyncHandler(async (req, res) => {
   requireDoctorProfile(req);
   const date = pickDate(req.query.date);
 
-  const queue = await Queue.find({ doctor: req.user.doctor, date })
+  const entries = await Queue.find({ doctor: req.user.doctor, date })
     .populate('patient', 'name')
     .populate('appointment')
     .sort(SERVE_ORDER);
+
+  // hasRecord lets the panel offer "Xulosa yozish" for a patient who was
+  // moved on (Keyingi bemor) before the doctor wrote the exam — otherwise
+  // that visit could never get its record / prescriptions.
+  const withRecord = new Set(
+    (await MedicalRecord.find({ appointment: { $in: entries.map((e) => e.appointment?._id).filter(Boolean) } }).distinct('appointment')).map(String)
+  );
+  const queue = entries.map((e) => ({ ...e.toObject(), hasRecord: withRecord.has(String(e.appointment?._id)) }));
 
   res.json({ queue });
 });

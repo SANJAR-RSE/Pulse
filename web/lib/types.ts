@@ -249,6 +249,8 @@ export interface DoctorPanelQueueEntry {
   patient: { name: string };
   appointment: Appointment;
   date: string;
+  /** Exam record already written for this visit. */
+  hasRecord?: boolean;
 }
 
 export const SAFETY_NOTICE =
