@@ -15,6 +15,7 @@ import type {
   MedicalRecord,
   Medication,
   Notification,
+  PrescriptionInput,
   QueueStatus,
   SleepLog,
   StatisticsData,
@@ -155,11 +156,20 @@ export function useCallNextPatient() {
 export function useCompleteAppointment() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: { appointmentId: string; examination: string; recommendation?: string; labResults?: LabResult[] }) =>
+    mutationFn: (d: {
+      appointmentId: string;
+      examination: string;
+      recommendation?: string;
+      labResults?: LabResult[];
+      prescriptions?: PrescriptionInput[];
+      goals?: { waterMl?: number; sleepHours?: number; workoutMinutes?: number; note?: string };
+    }) =>
       api.post(`/doctor-panel/appointments/${d.appointmentId}/complete`, {
         examination: d.examination,
         recommendation: d.recommendation,
         labResults: d.labResults,
+        prescriptions: d.prescriptions,
+        goals: d.goals,
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['doctor-panel-queue'] }),
   });

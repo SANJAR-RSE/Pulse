@@ -16,6 +16,18 @@ const toMin = (hhmm) => {
   const [h, m] = hhmm.split(':').map(Number);
   return h * 60 + m;
 };
+const MEAL = { before: 'och qoringa (ovqatdan oldin)', after: "to'q qoringa (ovqatdan keyin)", with: 'ovqat bilan birga' };
+
+// "Vitamin D ichish vaqti keldi (09:00)." + dose / meal / doctor when prescribed.
+function reminderText(med) {
+  let text = `${med.name} ichish vaqti keldi (${med.time}).`;
+  const details = [med.dosage, MEAL[med.mealRelation]].filter(Boolean);
+  if (details.length) text += `\n${details.join(', ')}.`;
+  if (med.note) text += `\n${med.note}`;
+  if (med.source === 'doctor' && med.doctorName) text += `\nTayinlagan: ${med.doctorName}.`;
+  return text;
+}
+
 const toHHMM = (min) => `${String(Math.floor(min / 60)).padStart(2, '0')}:${String(min % 60).padStart(2, '0')}`;
 
 async function runReminderTick(now = new Date()) {
@@ -24,7 +36,8 @@ async function runReminderTick(now = new Date()) {
   const window = [];
   for (let m = Math.max(0, nowMin - GRACE_MINUTES); m <= nowMin; m++) window.push(toHHMM(m));
 
-  const due = await Medication.find({ active: true, time: { $in: window } });
+  // Only inside the course dates (a 7-day prescription stops by itself).
+  const due = await Medication.find({ ...Medication.activeOn(date), time: { $in: window } });
   let sent = 0;
 
   for (const med of due) {
@@ -42,7 +55,7 @@ async function runReminderTick(now = new Date()) {
       throw err;
     }
 
-    await notify(med.user, 'medication_reminder', 'Dori ichish vaqti', `${med.name} ichish vaqti keldi (${med.time}).`, {
+    await notify(med.user, 'medication_reminder', 'Dori ichish vaqti', reminderText(med), {
       meta: { medicationId: String(med._id), name: med.name, time: med.time },
       telegramButtons: [[{ text: '✅ Ichdim', callback_data: `med:taken:${med._id}` }]],
     });
@@ -70,4 +83,4 @@ function startReminderScheduler() {
   console.log('[reminders] medication reminder scheduler started');
 }
 
-module.exports = { runReminderTick, startReminderScheduler, GRACE_MINUTES };
+module.exports = { runReminderTick, startReminderScheduler, reminderText, GRACE_MINUTES };

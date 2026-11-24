@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRealtimeStatus } from "@/lib/realtime";
-import type { DoctorPanelQueueEntry, LabResult } from "@/lib/types";
+import type { DoctorPanelQueueEntry, LabResult, PrescriptionInput } from "@/lib/types";
 
 export function useDoctorQueue(date?: string) {
   const live = useRealtimeStatus() === "live";
@@ -35,17 +35,23 @@ export function useCompleteAppointment() {
       examination,
       recommendation,
       labResults,
+      prescriptions,
+      goals,
     }: {
       appointmentId: string;
       examination: string;
       recommendation?: string;
       labResults?: LabResult[];
+      prescriptions?: PrescriptionInput[];
+      goals?: { waterMl?: number; sleepHours?: number; workoutMinutes?: number; note?: string };
     }) =>
       (
         await api.post(`/doctor-panel/appointments/${appointmentId}/complete`, {
           examination,
           recommendation,
           labResults,
+          prescriptions,
+          goals,
         })
       ).data,
     onSuccess: () => qc.invalidateQueries({ queryKey: ["doctor-panel-queue"] }),

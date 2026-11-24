@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FileClock, Building2, FlaskConical, Stethoscope } from "lucide-react";
+import { FileClock, Building2, FlaskConical, Pill, Stethoscope, Target } from "lucide-react";
+import { MEAL_LABEL } from "@/lib/types";
 import { useMedicalRecords } from "@/lib/hooks/use-clinical";
 import { Card, CardContent } from "@/components/ui/card";
 import { ListSkeleton } from "@/components/shared/loading-state";
@@ -72,6 +73,49 @@ export default function MedicalHistoryPage() {
                     <div>
                       <p className="text-xs font-medium text-muted-foreground">Tavsiya</p>
                       <p className="text-sm">{r.recommendation}</p>
+                    </div>
+                  )}
+
+                  {!!r.prescriptions?.length && (
+                    <div>
+                      <p className="mb-1.5 flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                        <Pill className="h-3.5 w-3.5" />
+                        Yozilgan dorilar
+                      </p>
+                      <div className="space-y-1.5">
+                        {r.prescriptions.map((p, i) => (
+                          <div key={i} className="rounded-lg border border-border px-3 py-2 text-sm">
+                            <p className="font-medium">
+                              {p.name}
+                              {p.dosage && <span className="font-normal text-muted-foreground"> — {p.dosage}</span>}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Kuniga {p.times.length} mahal ({p.times.join(", ")})
+                              {p.mealRelation && p.mealRelation !== "any" ? ` · ${MEAL_LABEL[p.mealRelation]}` : ""} · {p.durationDays} kun
+                              {p.note ? ` · ${p.note}` : ""}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {r.goals && (
+                    <div>
+                      <p className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                        <Target className="h-3.5 w-3.5" />
+                        Kunlik me&apos;yorlar
+                      </p>
+                      <p className="text-sm">
+                        {[
+                          r.goals.waterMl ? `Suv ${(r.goals.waterMl / 1000).toFixed(1)} L` : null,
+                          r.goals.sleepHours ? `Uyqu ${r.goals.sleepHours} soat` : null,
+                          r.goals.workoutMinutes !== undefined ? `Workout ${r.goals.workoutMinutes} daqiqa` : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                      {r.goals.note && <p className="text-xs text-muted-foreground">{r.goals.note}</p>}
                     </div>
                   )}
 

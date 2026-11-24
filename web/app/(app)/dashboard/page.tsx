@@ -11,7 +11,9 @@ import {
   Sparkles,
   ArrowRight,
   HeartPulse,
+  Target,
 } from "lucide-react";
+import type { DashboardData } from "@/lib/types";
 import { useAuthStore } from "@/lib/auth-store";
 import { useDashboard } from "@/lib/hooks/use-health";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +32,52 @@ function formatMinutes(min: number) {
   if (h === 0) return `${m} daq`;
   if (m === 0) return `${h} soat`;
   return `${h}s ${m}daq`;
+}
+
+// Today's progress against the patient's daily targets — personal ones from
+// their doctor when set at an exam, otherwise PULSE defaults.
+function GoalsCard({ data }: { data: DashboardData }) {
+  const g = data.goals;
+  if (!g) return null;
+  const sleepMin = data.sleep?.durationMinutes ?? 0;
+  const rows = [
+    { icon: Droplet, label: "Suv", value: `${(data.water.consumedMl / 1000).toFixed(1)} / ${(g.waterMl / 1000).toFixed(1)} L`, pct: (data.water.consumedMl / g.waterMl) * 100, week: `${((g.waterMl * 7) / 1000).toFixed(1)} L / hafta` },
+    { icon: Moon, label: "Uyqu", value: `${(sleepMin / 60).toFixed(1)} / ${g.sleepHours} soat`, pct: (sleepMin / (g.sleepHours * 60)) * 100, week: `${g.sleepHours * 7} soat / hafta` },
+    { icon: Dumbbell, label: "Workout", value: `${data.workout.totalMinutes} / ${g.workoutMinutes} daq`, pct: g.workoutMinutes ? (data.workout.totalMinutes / g.workoutMinutes) * 100 : 100, week: `${g.workoutMinutes * 7} daq / hafta` },
+  ];
+  return (
+    <Card className={g.setBy ? "border-primary/30 bg-primary/5" : undefined}>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex flex-wrap items-center gap-2 text-sm font-medium">
+          <Target className="h-4 w-4 text-primary" />
+          {g.setBy ? (
+            <span>
+              Shifokoringiz tavsiyasi <span className="font-normal text-muted-foreground">— {g.setBy}</span>
+            </span>
+          ) : (
+            <span>Kunlik me&apos;yor</span>
+          )}
+        </CardTitle>
+        {g.note && <p className="text-xs text-muted-foreground">📝 {g.note}</p>}
+      </CardHeader>
+      <CardContent className="grid gap-4 sm:grid-cols-3">
+        {rows.map((r) => (
+          <div key={r.label} className="space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="flex items-center gap-1.5 text-muted-foreground">
+                <r.icon className="h-3.5 w-3.5" /> {r.label}
+              </span>
+              <span className="font-medium">{r.value}</span>
+            </div>
+            <Progress value={Math.min(100, r.pct)} />
+            <p className="text-[11px] text-muted-foreground">
+              {r.pct >= 100 ? "✅ Bugungi me'yor bajarildi" : `Haftalik me'yor: ${r.week}`}
+            </p>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function DashboardPage() {
@@ -171,6 +219,8 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
           </div>
+
+          <GoalsCard data={data} />
 
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="lg:col-span-1">

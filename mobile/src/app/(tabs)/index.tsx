@@ -8,6 +8,7 @@ import { Button, Card, ErrorState, IconBox, Progress, Screen, SectionTitle, type
 import { useAuth } from '@/lib/auth-store';
 import { minutesLabel, prettyDate } from '@/lib/format';
 import { useDashboard, useNotifications } from '@/lib/queries';
+import type { DashboardData } from '@/lib/types';
 import { colors, font, radius, space } from '@/theme';
 
 type SheetKind = 'water' | 'sleep' | 'workout' | 'med' | null;
@@ -102,6 +103,8 @@ export default function DashboardScreen() {
                 onAdd={() => setSheet('med')}
               />
             </View>
+
+            <GoalsCard data={data} />
 
             {!data.queue && (
               <Card>
@@ -212,6 +215,41 @@ function Metric({ icon, label, value, hint, progress, onPress, onAdd }: { icon: 
         {value}
       </Text>
       {progress !== undefined ? <Progress value={progress} /> : <Text style={font.tiny}>{hint}</Text>}
+    </Card>
+  );
+}
+
+// Today vs the daily targets (doctor-set when available).
+function GoalsCard({ data }: { data: DashboardData }) {
+  const g = data.goals;
+  if (!g) return null;
+  const sleepMin = data.sleep?.durationMinutes ?? 0;
+  const rows: { icon: IconName; label: string; value: string; pct: number }[] = [
+    { icon: 'water', label: 'Suv', value: `${(data.water.consumedMl / 1000).toFixed(1)} / ${(g.waterMl / 1000).toFixed(1)} L`, pct: (data.water.consumedMl / g.waterMl) * 100 },
+    { icon: 'moon', label: 'Uyqu', value: `${(sleepMin / 60).toFixed(1)} / ${g.sleepHours} soat`, pct: (sleepMin / (g.sleepHours * 60)) * 100 },
+    { icon: 'barbell', label: 'Workout', value: `${data.workout.totalMinutes} / ${g.workoutMinutes} daq`, pct: g.workoutMinutes ? (data.workout.totalMinutes / g.workoutMinutes) * 100 : 100 },
+  ];
+  return (
+    <Card style={[{ gap: space.md }, g.setBy ? { borderColor: '#BFD3FD', backgroundColor: '#F7FAFF' } : null]}>
+      <View style={styles.rowCenter}>
+        <IconBox name="flag" size={34} />
+        <View style={{ flex: 1 }}>
+          <Text style={font.h3}>{g.setBy ? 'Shifokoringiz tavsiyasi' : "Kunlik me'yor"}</Text>
+          {!!g.setBy && <Text style={font.tiny}>{g.setBy}</Text>}
+        </View>
+      </View>
+      {!!g.note && <Text style={font.small}>📝 {g.note}</Text>}
+      {rows.map((r) => (
+        <View key={r.label} style={{ gap: 6 }}>
+          <View style={[styles.rowCenter, { justifyContent: 'space-between' }]}>
+            <Text style={font.small}>{r.label}</Text>
+            <Text style={{ fontWeight: '700', color: colors.text }}>
+              {r.value} {r.pct >= 100 ? '✅' : ''}
+            </Text>
+          </View>
+          <Progress value={r.pct} color={r.pct >= 100 ? colors.success : colors.primary} />
+        </View>
+      ))}
     </Card>
   );
 }

@@ -11,6 +11,7 @@ const notificationSchema = new mongoose.Schema(
         'queue_near',
         'queue_called',
         'medication_reminder',
+        'prescription',
         'water_reminder',
         'sleep_reminder',
         'workout_reminder',

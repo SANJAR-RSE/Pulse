@@ -3,7 +3,7 @@ import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import { Platform } from 'react-native';
 import { addDays, tashkentToday } from './format';
 import { MED_CHANNEL } from './notifications';
-import type { Medication } from './types';
+import { MEAL_LABEL, type Medication } from './types';
 
 // On-device medication reminders: scheduled on the phone itself, so they
 // fire even when the app is closed or offline. The server also sends a
@@ -17,7 +17,8 @@ let lastSignature = '';
 export async function syncMedicationReminders(meds: Medication[]) {
   const today = tashkentToday();
   // Skip work when nothing relevant changed (called on every refetch).
-  const signature = today + '|' + meds.map((m) => `${m._id}:${m.time}:${m.active}:${m.takenToday}`).sort().join(',');
+  const signature =
+    today + '|' + meds.map((m) => `${m._id}:${m.time}:${m.active}:${m.takenToday}:${m.endDate ?? ''}:${m.dosage ?? ''}`).sort().join(',');
   if (signature === lastSignature) return;
   lastSignature = signature;
 
@@ -29,6 +30,9 @@ export async function syncMedicationReminders(meds: Medication[]) {
       for (let i = 0; i < DAYS_AHEAD; i++) {
         const date = addDays(today, i);
         if (i === 0 && med.takenToday) continue; // already taken today
+        // Prescribed courses only remind inside their dates.
+        if (med.startDate && date < med.startDate) continue;
+        if (med.endDate && date > med.endDate) continue;
         // Absolute instant for HH:mm in Tashkent, whatever the phone's zone.
         const when = new Date(`${date}T${med.time}:00+05:00`);
         if (when.getTime() <= now) continue;
@@ -36,7 +40,12 @@ export async function syncMedicationReminders(meds: Medication[]) {
           identifier: `${MED_PREFIX}${med._id}-${date}`,
           content: {
             title: '💊 Dori ichish vaqti',
-            body: `${med.name} ichish vaqti keldi (${med.time}).`,
+            body: [
+              `${med.name} ichish vaqti keldi (${med.time}).`,
+              [med.dosage, med.mealRelation && med.mealRelation !== 'any' ? MEAL_LABEL[med.mealRelation] : ''].filter(Boolean).join(', '),
+            ]
+              .filter(Boolean)
+              .join('\n'),
             sound: true,
             data: { route: '/medications', medicationId: med._id },
           },

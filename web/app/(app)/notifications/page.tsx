@@ -27,6 +27,7 @@ const TYPE_ICON: Record<string, LucideIcon> = {
   queue_near: Users,
   queue_called: Users,
   medication_reminder: Pill,
+  prescription: Pill,
   water_reminder: Droplet,
   sleep_reminder: Moon,
   workout_reminder: Dumbbell,

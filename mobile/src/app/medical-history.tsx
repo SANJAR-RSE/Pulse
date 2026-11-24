@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card, EmptyState, ErrorState, LoadingState, Screen } from '@/components/ui';
 import { prettyDate } from '@/lib/format';
 import { useMedicalRecords } from '@/lib/queries';
+import { MEAL_LABEL } from '@/lib/types';
 import { colors, font, radius, space } from '@/theme';
 
 // Timeline of the patient's own examinations (scoped server-side to the user).
@@ -42,6 +43,36 @@ export default function MedicalHistoryScreen() {
             </View>
             {!!r.examination && <Block title="Ko'rik xulosasi" text={r.examination} />}
             {!!r.recommendation && <Block title="Tavsiya" text={r.recommendation} />}
+            {!!r.prescriptions?.length && (
+              <View style={{ gap: 6 }}>
+                <Text style={styles.blockTitle}>Yozilgan dorilar</Text>
+                {r.prescriptions.map((p, idx) => (
+                  <View key={idx} style={styles.rx}>
+                    <Text style={font.h3}>
+                      {p.name}
+                      {!!p.dosage && <Text style={font.small}> — {p.dosage}</Text>}
+                    </Text>
+                    <Text style={font.small}>
+                      Kuniga {p.times.length} mahal ({p.times.join(', ')})
+                      {p.mealRelation && p.mealRelation !== 'any' ? ` · ${MEAL_LABEL[p.mealRelation]}` : ''} · {p.durationDays} kun
+                    </Text>
+                    {!!p.note && <Text style={font.small}>📝 {p.note}</Text>}
+                  </View>
+                ))}
+              </View>
+            )}
+            {r.goals && (
+              <Block
+                title="Kunlik me'yorlar"
+                text={[
+                  r.goals.waterMl ? `Suv ${(r.goals.waterMl / 1000).toFixed(1)} L` : null,
+                  r.goals.sleepHours ? `Uyqu ${r.goals.sleepHours} soat` : null,
+                  r.goals.workoutMinutes !== undefined ? `Workout ${r.goals.workoutMinutes} daqiqa` : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ') + (r.goals.note ? `\n${r.goals.note}` : '')}
+              />
+            )}
             {r.labResults.length > 0 && (
               <View style={{ gap: 6 }}>
                 <Text style={styles.blockTitle}>Laboratoriya natijalari</Text>
@@ -84,4 +115,5 @@ const styles = StyleSheet.create({
   table: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, overflow: 'hidden' },
   tr: { flexDirection: 'row', paddingHorizontal: space.md, paddingVertical: 8 },
   td: { fontSize: 13, color: colors.text },
+  rx: { gap: 2, padding: space.md, borderRadius: radius.md, borderWidth: 1, borderColor: colors.border },
 });

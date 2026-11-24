@@ -10,6 +10,7 @@ const ICON: Record<string, IconName> = {
   queue_near: 'time',
   queue_called: 'megaphone',
   medication_reminder: 'medkit',
+  prescription: 'document-text',
   water_reminder: 'water',
   sleep_reminder: 'moon',
   workout_reminder: 'barbell',

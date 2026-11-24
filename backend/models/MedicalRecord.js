@@ -10,6 +10,32 @@ const labResultSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Snapshot of what the doctor prescribed at this visit (the live schedule
+// lives in Medication documents, linked back via Medication.record).
+const prescriptionSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    dosage: { type: String, default: '' },
+    times: [{ type: String }], // HH:mm
+    mealRelation: { type: String, enum: ['any', 'before', 'after', 'with'], default: 'any' },
+    durationDays: { type: Number, default: 7 },
+    note: { type: String, default: '' },
+    startDate: { type: String },
+    endDate: { type: String },
+  },
+  { _id: false }
+);
+
+const goalsSchema = new mongoose.Schema(
+  {
+    waterMl: { type: Number },
+    sleepHours: { type: Number },
+    workoutMinutes: { type: Number },
+    note: { type: String, default: '' },
+  },
+  { _id: false }
+);
+
 const medicalRecordSchema = new mongoose.Schema(
   {
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
@@ -22,6 +48,8 @@ const medicalRecordSchema = new mongoose.Schema(
     examination: { type: String, default: '' },
     recommendation: { type: String, default: '' },
     labResults: [labResultSchema],
+    prescriptions: [prescriptionSchema],
+    goals: { type: goalsSchema, default: undefined },
   },
   { timestamps: true }
 );

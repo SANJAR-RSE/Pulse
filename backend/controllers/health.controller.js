@@ -14,6 +14,18 @@ const { todayStr, addDays } = require('../utils/date');
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
 
+// The patient's daily targets + who set them (doctor or PULSE defaults).
+function goalsOf(profile) {
+  return {
+    waterMl: profile?.waterGoalMl || 2500,
+    sleepHours: profile?.sleepGoalHours || 8,
+    workoutMinutes: profile?.workoutGoalMinutes ?? 30,
+    setBy: profile?.goalsSetBy || '',
+    setAt: profile?.goalsSetAt || null,
+    note: profile?.goalsNote || '',
+  };
+}
+
 // ---------- Dashboard ----------
 
 // The one screen PULSE wants users to open every day — every number here is
@@ -27,7 +39,7 @@ const getDashboard = asyncHandler(async (req, res) => {
     WaterLog.find({ user: userId, date }),
     SleepLog.findOne({ user: userId, date }),
     Workout.find({ user: userId, date }),
-    Medication.find({ user: userId, active: true }),
+    Medication.find({ user: userId, ...Medication.activeOn(date) }),
     HealthProfile.findOne({ user: userId }),
     Appointment.findOne({
       patient: userId,
@@ -53,18 +65,23 @@ const getDashboard = asyncHandler(async (req, res) => {
 
   // Health Score is NOT a medical diagnosis — it's a simple, transparent
   // progress indicator over the day's logged activity (see promt.md #9).
-  const goals = [
-    waterMl >= (profile?.waterGoalMl || 2500),
-    !!sleepLog,
-    workouts.length > 0,
+  // Measured against the patient's own daily targets (set by their doctor
+  // at an exam, otherwise PULSE defaults).
+  const g = goalsOf(profile);
+  const workoutMin = workouts.reduce((s, w) => s + w.durationMinutes, 0);
+  const checks = [
+    waterMl >= g.waterMl,
+    !!sleepLog && sleepLog.durationMinutes >= g.sleepHours * 60 * 0.9, // within 10% counts
+    workoutMin >= Math.max(1, g.workoutMinutes),
     medications.length === 0 || takenCount === medications.length,
   ];
-  const healthScore = Math.round((goals.filter(Boolean).length / goals.length) * 100);
+  const healthScore = Math.round((checks.filter(Boolean).length / checks.length) * 100);
 
   res.json({
-    water: { consumedMl: waterMl, goalMl: profile?.waterGoalMl || 2500 },
+    goals: g,
+    water: { consumedMl: waterMl, goalMl: g.waterMl },
     sleep: sleepLog ? { durationMinutes: sleepLog.durationMinutes } : null,
-    workout: { totalMinutes: workouts.reduce((s, w) => s + w.durationMinutes, 0) },
+    workout: { totalMinutes: workoutMin },
     medication: { taken: takenCount, total: medications.length },
     nextAppointment: nextAppointment
       ? {
@@ -174,8 +191,9 @@ const addMedication = asyncHandler(async (req, res) => {
 });
 
 const listMedications = asyncHandler(async (req, res) => {
-  const medications = await Medication.find({ user: req.user._id, active: true }).sort({ time: 1 });
   const date = todayStr();
+  // Only what is due today: active, and inside its course dates.
+  const medications = await Medication.find({ user: req.user._id, ...Medication.activeOn(date) }).sort({ time: 1 });
   const logs = await MedicationLog.find({
     user: req.user._id,
     date,
@@ -204,48 +222,90 @@ const logMedicationTaken = asyncHandler(async (req, res) => {
 
 // ---------- Statistics ----------
 
-// Window: the last 7 days INCLUDING today (today + 6 days before), app timezone.
-const getStatistics = asyncHandler(async (req, res) => {
-  const userId = req.user._id;
-  const today = todayStr();
-  const sinceStr = addDays(today, -6);
-  const inWindow = { $gte: sinceStr, $lte: today };
-
-  const [waterLogs, sleepLogs, workouts, medications, takenLogs, appointments, queues] = await Promise.all([
+// One 7-day window [from, to] of real logged data.
+async function weekStats(userId, from, to, medications) {
+  const inWindow = { $gte: from, $lte: to };
+  const [waterLogs, sleepLogs, workouts, takenLogs, appointments, queues] = await Promise.all([
     WaterLog.find({ user: userId, date: inWindow }),
     SleepLog.find({ user: userId, date: inWindow }),
     Workout.find({ user: userId, date: inWindow }),
-    Medication.find({ user: userId, active: true }),
     MedicationLog.find({ user: userId, taken: true, date: inWindow }),
     Appointment.find({ patient: userId, date: inWindow, status: { $ne: 'cancelled' } }),
     Queue.find({ patient: userId, status: 'COMPLETED', date: inWindow }),
   ]);
 
   // Adherence = doses taken / doses scheduled. Only "taken" is ever logged,
-  // so the denominator must come from the schedule: each active medication
-  // is due once per day, starting from the day it was added.
+  // so the denominator comes from the schedule: each medication is due once
+  // per day from the later of (added, course start, window start) to the
+  // earlier of (course end, window end).
   let scheduled = 0;
+  const due = new Set();
   for (const m of medications) {
-    const added = todayStr(m.createdAt);
-    for (let d = added > sinceStr ? added : sinceStr; d <= today; d = addDays(d, 1)) scheduled += 1;
+    let start = todayStr(m.createdAt);
+    if (m.startDate && m.startDate > start) start = m.startDate;
+    if (from > start) start = from;
+    let end = to;
+    if (m.endDate && m.endDate < end) end = m.endDate;
+    for (let d = start; d <= end; d = addDays(d, 1)) {
+      scheduled += 1;
+      due.add(`${m._id}|${d}`);
+    }
   }
-  const activeIds = new Set(medications.map((m) => String(m._id)));
-  const taken = takenLogs.filter((l) => activeIds.has(String(l.medication))).length;
+  const taken = takenLogs.filter((l) => due.has(`${l.medication}|${l.date}`)).length;
 
   // Approximates time-in-queue from real timestamps (joined -> done) —
   // no synthetic constant, since that would misrepresent an actual metric.
   const queueMinutes = queues.map((q) => Math.max(0, Math.round((q.updatedAt - q.createdAt) / 60000)));
+  const waterMl = waterLogs.reduce((s, l) => s + l.amountMl, 0);
+  const sleepMin = sleepLogs.reduce((s, l) => s + l.durationMinutes, 0);
 
-  res.json({
-    waterLiters: +(waterLogs.reduce((s, l) => s + l.amountMl, 0) / 1000).toFixed(1),
-    sleepHours: Math.round(sleepLogs.reduce((s, l) => s + l.durationMinutes, 0) / 60),
+  return {
+    from,
+    to,
+    waterLiters: +(waterMl / 1000).toFixed(1),
+    sleepHours: Math.round(sleepMin / 60),
+    avgSleepHours: sleepLogs.length ? +(sleepMin / sleepLogs.length / 60).toFixed(1) : null,
     workoutSessions: workouts.length,
+    workoutMinutes: workouts.reduce((s, w) => s + w.durationMinutes, 0),
     medicationAdherence: scheduled === 0 ? null : Math.min(100, Math.round((taken / scheduled) * 100)),
     appointments: appointments.length,
     queueAverageMinutes:
-      queueMinutes.length === 0
-        ? null
-        : Math.round(queueMinutes.reduce((s, m) => s + m, 0) / queueMinutes.length),
+      queueMinutes.length === 0 ? null : Math.round(queueMinutes.reduce((s, m) => s + m, 0) / queueMinutes.length),
+  };
+}
+
+// This week = the last 7 days INCLUDING today; last week = the 7 days before.
+// Weekly targets = the patient's daily goals x 7.
+const getStatistics = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const today = todayStr();
+  const [medications, profile] = await Promise.all([
+    Medication.find({ user: userId, active: true }),
+    HealthProfile.findOne({ user: userId }),
+  ]);
+
+  const [thisWeek, lastWeek] = await Promise.all([
+    weekStats(userId, addDays(today, -6), today, medications),
+    weekStats(userId, addDays(today, -13), addDays(today, -7), medications),
+  ]);
+  const g = goalsOf(profile);
+
+  res.json({
+    // Flat fields kept for existing clients (= this week).
+    waterLiters: thisWeek.waterLiters,
+    sleepHours: thisWeek.sleepHours,
+    workoutSessions: thisWeek.workoutSessions,
+    medicationAdherence: thisWeek.medicationAdherence,
+    appointments: thisWeek.appointments,
+    queueAverageMinutes: thisWeek.queueAverageMinutes,
+    thisWeek,
+    lastWeek,
+    weeklyGoals: {
+      waterLiters: +((g.waterMl * 7) / 1000).toFixed(1),
+      sleepHours: g.sleepHours * 7,
+      workoutMinutes: g.workoutMinutes * 7,
+      setBy: g.setBy,
+    },
   });
 });
 

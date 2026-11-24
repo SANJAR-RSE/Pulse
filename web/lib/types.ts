@@ -57,6 +57,7 @@ export interface QueueStatus {
 }
 
 export interface DashboardData {
+  goals: HealthGoals;
   water: { consumedMl: number; goalMl: number };
   sleep: { durationMinutes: number } | null;
   workout: { totalMinutes: number };
@@ -66,6 +67,19 @@ export interface DashboardData {
   healthScore: number;
 }
 
+export interface WeekStats {
+  from: string;
+  to: string;
+  waterLiters: number;
+  sleepHours: number;
+  avgSleepHours: number | null;
+  workoutSessions: number;
+  workoutMinutes: number;
+  medicationAdherence: number | null;
+  appointments: number;
+  queueAverageMinutes: number | null;
+}
+
 export interface StatisticsData {
   waterLiters: number;
   sleepHours: number;
@@ -73,6 +87,9 @@ export interface StatisticsData {
   medicationAdherence: number | null;
   appointments: number;
   queueAverageMinutes: number | null;
+  thisWeek: WeekStats;
+  lastWeek: WeekStats;
+  weeklyGoals: { waterLiters: number; sleepHours: number; workoutMinutes: number; setBy: string };
 }
 
 export interface WaterLog {
@@ -98,13 +115,56 @@ export interface Workout {
   date: string;
 }
 
+export type MealRelation = "any" | "before" | "after" | "with";
+
 export interface Medication {
   _id: string;
   name: string;
   time: string;
   active: boolean;
   takenToday?: boolean;
+  source?: "self" | "doctor";
+  dosage?: string;
+  mealRelation?: MealRelation;
+  note?: string;
+  startDate?: string;
+  endDate?: string;
+  timesPerDay?: number;
+  intakeIndex?: number;
+  courseId?: string;
+  doctorName?: string;
 }
+
+/** What the doctor writes at an exam (one entry per medicine). */
+export interface PrescriptionInput {
+  name: string;
+  dosage: string;
+  times: string[];
+  mealRelation: MealRelation;
+  durationDays: number;
+  note: string;
+}
+
+export interface Prescription extends PrescriptionInput {
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface HealthGoals {
+  waterMl: number;
+  sleepHours: number;
+  workoutMinutes: number;
+  setBy: string;
+  setAt: string | null;
+  note: string;
+}
+
+export const MEAL_LABEL: Record<MealRelation, string> = {
+  any: "Farqi yo'q",
+  before: "Och qoringa (ovqatdan oldin)",
+  after: "To'q qoringa (ovqatdan keyin)",
+  with: "Ovqat bilan birga",
+};
 
 export interface Appointment {
   _id: string;
@@ -135,6 +195,8 @@ export interface MedicalRecord {
   examination: string;
   recommendation: string;
   labResults: LabResult[];
+  prescriptions?: Prescription[];
+  goals?: { waterMl?: number; sleepHours?: number; workoutMinutes?: number; note?: string };
   createdAt: string;
 }
 

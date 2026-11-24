@@ -16,7 +16,13 @@ async function handleMedicationList(ctx) {
     }
     for (const med of medications) {
       const id = med._id || med.id;
-      const text = `💊 ${med.name} — ${med.time}${med.takenToday ? '\n✅ Bugun ichilgan' : ''}`;
+      const MEAL = { before: 'och qoringa', after: "to'q qoringa", with: 'ovqat bilan' };
+      const details = [med.dosage, MEAL[med.mealRelation]].filter(Boolean).join(', ');
+      const text =
+        `💊 ${med.name} — ${med.time}` +
+        (details ? `\n${details}` : '') +
+        (med.source === 'doctor' && med.doctorName ? `\n🩺 ${med.doctorName}${med.endDate ? `, ${med.endDate} gacha` : ''}` : '') +
+        (med.takenToday ? '\n✅ Bugun ichilgan' : '');
       if (med.takenToday) {
         await ctx.reply(text);
       } else {
