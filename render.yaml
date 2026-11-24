@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: pulse-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: BOT_INTERNAL_SECRET
+        sync: false
+      - key: BOT_USERNAME
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  - type: worker
+    name: pulse-bot
+    runtime: node
+    rootDir: bot
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: BACKEND_URL
+        sync: false
+      - key: BOT_INTERNAL_SECRET
+        sync: false
