@@ -19,6 +19,7 @@ HealthTech ekotizimi: kundalik sog'liq kuzatuvi (suv/uyqu/mashg'ulot/dori), klin
 
 ```
 web/       — Next.js patient/doctor ilovasi (Vercel)
+mobile/    — Expo (React Native) bemor + shifokor mobil ilovasi (Android APK)
 landing/   — marketing sahifa (Vercel)
 backend/   — Express + Mongoose API, yagona source of truth (Render)
 bot/       — Telegraf Telegram bot, backend bilan bir xil PULSE account (Render)
@@ -54,7 +55,13 @@ cp .env.example .env.local
 npm install
 npm run dev               # http://localhost:3001
 
-# 4) Telegram bot
+# 4) Mobil ilova (Expo)
+cd mobile
+npm install
+npx expo start          # telefonda Expo Go bilan QR kodni skanerlang
+# APK: npx eas-cli@latest build -p android --profile preview
+
+# 5) Telegram bot
 cd bot
 cp .env.example .env   # BOT_TOKEN, BACKEND_URL, BOT_INTERNAL_SECRET (backend bilan bir xil!)
 npm install
