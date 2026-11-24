@@ -8,6 +8,7 @@ import { DigitalQueue } from "@/components/landing/digital-queue";
 import { Telegram } from "@/components/landing/telegram";
 import { PulseAI } from "@/components/landing/pulse-ai";
 import { Statistics } from "@/components/landing/statistics";
+import { AppDownload } from "@/components/landing/app-download";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { FinalCta } from "@/components/landing/final-cta";
 import { Footer } from "@/components/landing/footer";
@@ -26,6 +27,7 @@ export default function Home() {
         <Telegram />
         <PulseAI />
         <Statistics />
+        <AppDownload />
         <HowItWorks />
         <FinalCta />
       </main>

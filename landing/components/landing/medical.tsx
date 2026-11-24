@@ -5,6 +5,7 @@ import {
   CalendarCheckIcon,
   ClipboardIcon,
   FlaskIcon,
+  UsersIcon,
 } from "@/components/icons";
 
 const ITEMS = [
@@ -32,6 +33,11 @@ const ITEMS = [
     icon: FlaskIcon,
     title: "Tahlil natijalari",
     description: "Laboratoriya natijalarini istalgan vaqt PULSE'da ko'ring.",
+  },
+  {
+    icon: UsersIcon,
+    title: "Shifokor paneli",
+    description: "Shifokor bugungi navbatni ko'radi, bemorni chaqiradi va ko'rik xulosasini yozadi — bemorga darhol yetib boradi.",
   },
 ];
 

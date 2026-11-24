@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   DropletIcon,
@@ -6,8 +6,10 @@ import {
   DumbbellIcon,
   PillIcon,
   ArrowRightIcon,
+  SendIcon,
+  AndroidIcon,
 } from "@/components/icons";
-import { WEB_URL } from "@/lib/site-config";
+import { APK_URL, DEMO_ACCOUNTS, DEMO_PASSWORD, TELEGRAM_URL, WEB_URL } from "@/lib/site-config";
 
 const DASHBOARD_METRICS = [
   { icon: DropletIcon, label: "Suv", value: "1.8L / 2.5L" },
@@ -36,35 +38,35 @@ export function Hero() {
           </p>
 
           <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-            Suv, uyqu, sport va dorilardan tortib, klinika, shifokor, navbat va
-            tibbiy tarixgacha — barchasi Web va Telegramda bitta hisob ostida.
+            Suv, uyqu, sport va dorilardan tortib, klinika, shifokor, raqamli
+            navbat va tibbiy tarixgacha — barchasi Web, mobil ilova va
+            Telegramda bitta hisob ostida, real vaqtda sinxron.
           </p>
 
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <a href={WEB_URL} target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="w-full sm:w-auto">
-                PULSE&apos;ni boshlash
-                <ArrowRightIcon className="h-4 w-4" />
-              </Button>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
+            <a href={WEB_URL} target="_blank" rel="noopener noreferrer" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto" })}>
+              PULSE&apos;ni boshlash
+              <ArrowRightIcon className="h-4 w-4" />
             </a>
-            <a
-              href="#how-it-works"
-              className={buttonVariants({
-                variant: "outline",
-                size: "lg",
-                className: "w-full sm:w-auto",
-              })}
-            >
-              Qanday ishlaydi
+            <a href={APK_URL} className={buttonVariants({ variant: "outline", size: "lg", className: "w-full sm:w-auto" })}>
+              <AndroidIcon className="h-5 w-5 text-[#3DDC84]" />
+              Android ilova
+            </a>
+            <a href={TELEGRAM_URL} target="_blank" rel="noopener noreferrer" className={buttonVariants({ variant: "ghost", size: "lg", className: "w-full sm:w-auto" })}>
+              <SendIcon className="h-4 w-4 text-[#229ED9]" />
+              Telegram bot
             </a>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-xs text-muted-foreground">
-            <span>Real backend</span>
-            <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
-            <span>Telegram bilan sinxron</span>
-            <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
-            <span>PULSE AI yordamchi</span>
+          <div className="rounded-xl border border-card-border bg-white/[0.02] px-4 py-3 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">Demo hisoblar:</span>{" "}
+            {DEMO_ACCOUNTS.map((a, i) => (
+              <span key={a.email}>
+                {i > 0 && " · "}
+                {a.role}: <span className="text-muted">{a.email}</span>
+              </span>
+            ))}{" "}
+            · parol <span className="text-muted">{DEMO_PASSWORD}</span>
           </div>
         </div>
 
@@ -76,16 +78,13 @@ export function Hero() {
                 <p className="text-sm font-medium text-foreground">Bugungi holat</p>
               </div>
               <span className="rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">
-                Health Score 78%
+                Health Score 75%
               </span>
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               {DASHBOARD_METRICS.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="rounded-xl border border-card-border bg-white/[0.02] p-3"
-                >
+                <div key={metric.label} className="rounded-xl border border-card-border bg-white/[0.02] p-3">
                   <metric.icon className="h-4 w-4 text-accent" />
                   <p className="mt-2 text-xs text-muted-foreground">{metric.label}</p>
                   <p className="text-sm font-semibold text-foreground">{metric.value}</p>
@@ -93,12 +92,12 @@ export function Hero() {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-3">
+            <div className="mt-3 flex items-center justify-between rounded-xl bg-emerald-500 p-3 text-white">
               <div>
-                <p className="text-xs text-muted-foreground">Navbat</p>
-                <p className="text-sm font-semibold text-foreground">A-24</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider opacity-90">Navbatingiz keldi!</p>
+                <p className="text-lg font-bold">L-24</p>
               </div>
-              <p className="text-xs text-accent">Oldingizda: 3 kishi</p>
+              <p className="text-xs opacity-90">Shifokor xonasiga boring</p>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import { ArrowRightIcon } from "@/components/icons";
-import { WEB_URL, TELEGRAM_URL } from "@/lib/site-config";
+import { buttonVariants } from "@/components/ui/button";
+import { ArrowRightIcon, AndroidIcon } from "@/components/icons";
+import { WEB_URL, TELEGRAM_URL, APK_URL } from "@/lib/site-config";
 
 export function FinalCta() {
   return (
@@ -16,11 +16,13 @@ export function FinalCta() {
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a href={WEB_URL} target="_blank" rel="noopener noreferrer">
-            <Button size="lg" className="w-full sm:w-auto">
-              PULSE&apos;ni hoziroq boshlang
-              <ArrowRightIcon className="h-4 w-4" />
-            </Button>
+          <a href={WEB_URL} target="_blank" rel="noopener noreferrer" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto" })}>
+            PULSE&apos;ni hoziroq boshlang
+            <ArrowRightIcon className="h-4 w-4" />
+          </a>
+          <a href={APK_URL} className={buttonVariants({ variant: "outline", size: "lg", className: "w-full sm:w-auto" })}>
+            <AndroidIcon className="h-5 w-5 text-[#3DDC84]" />
+            Android ilovani yuklab olish
           </a>
           <a
             href={TELEGRAM_URL}

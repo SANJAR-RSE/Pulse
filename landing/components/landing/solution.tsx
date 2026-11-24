@@ -1,7 +1,8 @@
 import { ActivityIcon, SendIcon, ArrowRightIcon } from "@/components/icons";
 
 const FLOW = [
-  { label: "Web + Telegram", hint: "Bitta hisob" },
+  { label: "Web · Mobil ilova · Telegram", hint: "Bitta hisob" },
+  { label: "Real vaqt (WebSocket)", hint: "Har o'zgarish darhol" },
   { label: "Backend API", hint: "Yagona source of truth" },
   { label: "MongoDB", hint: "Yagona baza" },
   { label: "PULSE AI", hint: "Real ma'lumot bilan" },
@@ -21,14 +22,14 @@ export function Solution() {
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted">
               PULSE kundalik salomatlik va tibbiy xizmatlarni yagona
-              platformaga birlashtiradi: Web ilova, Telegram bot, PULSE AI
-              yordamchi va real backend — barchasi bitta PULSE account va
-              bitta MongoDB orqali ishlaydi.
+              platformaga birlashtiradi: Web ilova, Android ilova, Telegram
+              bot, PULSE AI yordamchi va real backend — barchasi bitta PULSE
+              account va bitta MongoDB orqali ishlaydi.
             </p>
-            <p className="mt-3 flex items-center gap-2 text-sm text-accent">
-              <SendIcon className="h-4 w-4" />
-              Web&apos;da qilingan har bir amal Telegramga, Telegramdagi har
-              bir amal esa Web&apos;ga zudlik bilan aks etadi.
+            <p className="mt-3 flex items-start gap-2 text-sm text-accent">
+              <SendIcon className="mt-0.5 h-4 w-4 shrink-0" />
+              Bir joyda qilingan har bir amal — navbat, suv, dori — qolgan
+              barcha platformalarda real vaqtda, sahifani yangilamasdan aks etadi.
             </p>
           </div>
 

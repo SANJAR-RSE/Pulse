@@ -1,13 +1,14 @@
-import Link from "next/link";
-import { PulseIcon } from "@/components/icons";
-import { WEB_URL, TELEGRAM_URL, SITE } from "@/lib/site-config";
+import Image from "next/image";
+import { WEB_URL, TELEGRAM_URL, APK_URL, GITHUB_URL, SITE } from "@/lib/site-config";
 
 const COLUMNS = [
   {
     title: "Platforma",
     links: [
       { label: "Web ilova", href: WEB_URL, external: true },
+      { label: "Android ilova (APK)", href: APK_URL, external: false },
       { label: "Telegram bot", href: TELEGRAM_URL, external: true },
+      { label: "GitHub", href: GITHUB_URL, external: true },
     ],
   },
   {
@@ -36,12 +37,10 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-16 md:px-8">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link href="#top" className="flex items-center gap-2 font-semibold tracking-tight">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent">
-                <PulseIcon className="h-4.5 w-4.5" />
-              </span>
+            <a href="#top" className="flex items-center gap-2 font-semibold tracking-tight">
+              <Image src="/logo.png" alt="PULSE" width={32} height={32} className="h-8 w-8" />
               <span className="text-base text-foreground">{SITE.name}</span>
-            </Link>
+            </a>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
               {SITE.description}
             </p>

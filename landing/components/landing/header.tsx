@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { PulseIcon, MenuIcon, XIcon } from "@/components/icons";
+import Image from "next/image";
+import { buttonVariants } from "@/components/ui/button";
+import { MenuIcon, XIcon } from "@/components/icons";
 import { WEB_URL } from "@/lib/site-config";
 
 const NAV_LINKS = [
@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { href: "#daily-health", label: "Imkoniyatlar" },
   { href: "#queue", label: "Raqamli navbat" },
   { href: "#ai", label: "PULSE AI" },
-  { href: "#how-it-works", label: "Qanday ishlaydi" },
+  { href: "#download", label: "Mobil ilova" },
 ];
 
 export function Header() {
@@ -20,12 +20,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-card-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 md:px-8">
-        <Link href="#top" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-accent">
-            <PulseIcon className="h-4.5 w-4.5" />
-          </span>
+        <a href="#top" className="flex items-center gap-2.5 font-semibold tracking-tight">
+          <Image src="/logo.png" alt="PULSE" width={32} height={32} priority className="h-8 w-8" />
           <span className="text-base text-foreground">PULSE</span>
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((link) => (
@@ -40,8 +38,8 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <a href={WEB_URL} target="_blank" rel="noopener noreferrer">
-            <Button size="sm">Boshlash</Button>
+          <a href={WEB_URL} target="_blank" rel="noopener noreferrer" className={buttonVariants({ size: "sm" })}>
+            Boshlash
           </a>
         </div>
 
@@ -74,10 +72,9 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setOpen(false)}
+              className={buttonVariants({ size: "sm", className: "w-full" })}
             >
-              <Button size="sm" className="w-full">
-                Boshlash
-              </Button>
+              Boshlash
             </a>
           </nav>
         </div>

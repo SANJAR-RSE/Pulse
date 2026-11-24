@@ -16,23 +16,33 @@ export function DigitalQueue() {
               Raqamli navbat — endi koridorda kutish shart emas
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted">
-              Navbat holatingiz real vaqtda yangilanadi:{" "}
-              <span className="text-foreground">WAITING → NEAR → CALLED</span>.
+              Shifokor panelda &quot;Keyingi bemor&quot;ni bosadi — sizning
+              holatingiz o&apos;sha zahoti yangilanadi:{" "}
+              <span className="text-foreground">Kutmoqda → Yaqin → Chaqirildi</span>.
               Oldingizda nechta odam qolgani va taxminiy kutish vaqtini
               istalgan joydan kuzatib boring.
             </p>
-            <p className="mt-4 flex items-center gap-2 text-sm text-accent">
-              <CheckCircleIcon className="h-4 w-4 shrink-0" />
-              Navbat backend tomonidan boshqariladi — hech qanday soxta
-              countdown yo&apos;q.
-            </p>
+            <ul className="mt-4 flex flex-col gap-2 text-sm text-accent">
+              <li className="flex items-center gap-2">
+                <CheckCircleIcon className="h-4 w-4 shrink-0" />
+                WebSocket orqali real vaqt — sahifani yangilash shart emas
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircleIcon className="h-4 w-4 shrink-0" />
+                Chaqirilganingizda Web, mobil ilova va Telegramga xabar
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircleIcon className="h-4 w-4 shrink-0" />
+                Navbat qabul vaqti tartibida — soxta countdown yo&apos;q
+              </li>
+            </ul>
           </div>
 
           <div className="rounded-2xl border border-card-border bg-card p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">Sizning navbatingiz</p>
-                <p className="text-2xl font-bold text-foreground">A-24</p>
+                <p className="text-2xl font-bold text-foreground">L-24</p>
               </div>
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent">
                 <UsersIcon className="h-5 w-5" />
@@ -42,7 +52,7 @@ export function DigitalQueue() {
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-card-border bg-white/[0.02] p-3">
                 <p className="text-xs text-muted-foreground">Hozir chaqirilgan</p>
-                <p className="text-sm font-semibold text-foreground">A-21</p>
+                <p className="text-sm font-semibold text-foreground">L-21</p>
               </div>
               <div className="rounded-xl border border-card-border bg-white/[0.02] p-3">
                 <p className="text-xs text-muted-foreground">Oldingizda</p>

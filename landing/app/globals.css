@@ -7,9 +7,10 @@
   --card-border: rgba(255, 255, 255, 0.08);
   --muted: #92a0b3;
   --muted-foreground: #64748b;
-  --accent: #2dd4bf;
-  --accent-strong: #14b8a6;
-  --accent-foreground: #04140f;
+  /* PULSE brand blue — sampled from the logo, same as Web and the mobile app */
+  --accent: #4c8dff;
+  --accent-strong: #2570f4;
+  --accent-foreground: #ffffff;
 }
 
 @theme inline {
@@ -45,8 +46,8 @@ body {
 .pulse-glow {
   background: radial-gradient(
     60% 50% at 50% 0%,
-    rgba(45, 212, 191, 0.16) 0%,
-    rgba(45, 212, 191, 0) 70%
+    rgba(37, 112, 244, 0.22) 0%,
+    rgba(37, 112, 244, 0) 70%
   );
 }
 
