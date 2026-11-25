@@ -8,11 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Activity, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuthStore } from "@/lib/auth-store";
+import { useAuthStore, type CodeChallenge } from "@/lib/auth-store";
+import { homePath } from "@/lib/nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CodeStep } from "@/components/auth/code-step";
+import { GoogleButton } from "@/components/auth/google-button";
 
 const schema = z.object({
   name: z.string().min(2, "Ism kamida 2 belgidan iborat bo'lsin."),
@@ -23,12 +26,13 @@ type FormValues = z.infer<typeof schema>;
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register: registerUser, status } = useAuthStore();
+  const { register: registerUser, status, user } = useAuthStore();
   const [submitting, setSubmitting] = useState(false);
+  const [challenge, setChallenge] = useState<CodeChallenge | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/dashboard");
-  }, [status, router]);
+    if (status === "authenticated") router.replace(homePath(user?.role));
+  }, [status, user, router]);
 
   const {
     register,
@@ -36,16 +40,19 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
+  const goHome = () => {
+    toast.success("Ro'yxatdan muvaffaqiyatli o'tdingiz!");
+    router.replace(homePath(useAuthStore.getState().user?.role));
+  };
+
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
-      await registerUser(values.name, values.email, values.password);
-      toast.success("Ro'yxatdan muvaffaqiyatli o'tdingiz!");
-      router.replace("/dashboard");
+      const code = await registerUser(values.name, values.email, values.password);
+      if (code) setChallenge(code); // account is created only after the emailed code
+      else goHome();
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Ro'yxatdan o'tishda xatolik yuz berdi."
-      );
+      toast.error(err instanceof Error ? err.message : "Ro'yxatdan o'tishda xatolik yuz berdi.");
     } finally {
       setSubmitting(false);
     }
@@ -64,64 +71,53 @@ export default function RegisterPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Ro&apos;yxatdan o&apos;tish</CardTitle>
-            <CardDescription>Yangi hisob yarating va PULSE&apos;dan foydalaning.</CardDescription>
+            <CardTitle>{challenge ? "Emailni tasdiqlang" : "Ro'yxatdan o'tish"}</CardTitle>
+            <CardDescription>
+              {challenge ? "Hisob emailingizga kelgan kod tasdiqlangach yaratiladi." : "Yangi hisob yarating va PULSE'dan foydalaning."}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-              <div className="space-y-1.5">
-                <Label htmlFor="name">Ism</Label>
-                <Input
-                  id="name"
-                  placeholder="Sanjar Aliyev"
-                  autoComplete="name"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-xs text-destructive">{errors.name.message}</p>
-                )}
-              </div>
+            {challenge ? (
+              <CodeStep challenge={challenge} onVerified={goHome} onBack={() => setChallenge(null)} />
+            ) : (
+              <>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name">Ism</Label>
+                    <Input id="name" placeholder="Sanjar Aliyev" autoComplete="name" {...register("name")} />
+                    {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+                  </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="siz@example.com"
-                  autoComplete="email"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-xs text-destructive">{errors.email.message}</p>
-                )}
-              </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="siz@gmail.com" autoComplete="email" {...register("email")} />
+                    {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                  </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="password">Parol</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Kamida 6 belgi"
-                  autoComplete="new-password"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <p className="text-xs text-destructive">{errors.password.message}</p>
-                )}
-              </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="password">Parol</Label>
+                    <Input id="password" type="password" placeholder="Kamida 6 belgi" autoComplete="new-password" {...register("password")} />
+                    {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+                  </div>
 
-              <Button type="submit" className="w-full gap-2" disabled={submitting}>
-                {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-                Hisob yaratish
-              </Button>
-            </form>
+                  <Button type="submit" className="w-full gap-2" disabled={submitting}>
+                    {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Hisob yaratish
+                  </Button>
+                </form>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Hisobingiz bormi?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
-                Tizimga kirish
-              </Link>
-            </p>
+                <div className="mt-4">
+                  <GoogleButton onSignedIn={goHome} text="signup_with" />
+                </div>
+
+                <p className="mt-4 text-center text-sm text-muted-foreground">
+                  Hisobingiz bormi?{" "}
+                  <Link href="/login" className="font-medium text-primary hover:underline">
+                    Tizimga kirish
+                  </Link>
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

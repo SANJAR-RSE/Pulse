@@ -2,9 +2,10 @@ import { Link } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AuthShell } from '@/components/auth-shell';
+import { CodeStep } from '@/components/code-step';
 import { Button, Input } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
-import { useAuth } from '@/lib/auth-store';
+import { useAuth, type CodeChallenge } from '@/lib/auth-store';
 import { colors, font, radius, space } from '@/theme';
 
 // Seeded demo accounts (backend/scripts/seedDatabase.js) — one tap for the jury demo.
@@ -21,6 +22,7 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [challenge, setChallenge] = useState<CodeChallenge | null>(null);
 
   const signIn = async (e: string, p: string, key: string) => {
     const next: typeof errors = {};
@@ -30,14 +32,23 @@ export default function LoginScreen() {
     if (Object.keys(next).length) return;
     setLoading(key);
     try {
-      await login(e, p);
-      toast({ type: 'success', title: 'Xush kelibsiz!' });
+      const code = await login(e, p);
+      if (code) setChallenge(code); // step 2: code from the email
+      else toast({ type: 'success', title: 'Xush kelibsiz!' });
     } catch (err) {
       toast({ type: 'error', title: (err as Error).message });
     } finally {
       setLoading(null);
     }
   };
+
+  if (challenge) {
+    return (
+      <AuthShell title="Emailni tasdiqlang" subtitle="Xavfsizlik uchun emailingizga kelgan kodni kiriting.">
+        <CodeStep challenge={challenge} onBack={() => setChallenge(null)} onVerified={() => toast({ type: 'success', title: 'Xush kelibsiz!' })} />
+      </AuthShell>
+    );
+  }
 
   return (
     <AuthShell
@@ -52,13 +63,13 @@ export default function LoginScreen() {
         </Text>
       }
     >
-      <Input label="Email" value={email} onChangeText={setEmail} placeholder="siz@pulse.demo" autoCapitalize="none" autoComplete="email" keyboardType="email-address" error={errors.email} />
+      <Input label="Email" value={email} onChangeText={setEmail} placeholder="siz@gmail.com" autoCapitalize="none" autoComplete="email" keyboardType="email-address" error={errors.email} />
       <Input label="Parol" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry autoComplete="password" error={errors.password} onSubmitEditing={() => signIn(email, password, 'form')} />
       <Button title="Tizimga kirish" size="lg" loading={loading === 'form'} disabled={!!loading} onPress={() => signIn(email, password, 'form')} />
 
       <View style={styles.divider}>
         <View style={styles.line} />
-        <Text style={font.tiny}>DEMO HISOBLAR</Text>
+        <Text style={font.tiny}>DEMO HISOBLAR (KODSIZ)</Text>
         <View style={styles.line} />
       </View>
       <View style={{ flexDirection: 'row', gap: space.sm }}>

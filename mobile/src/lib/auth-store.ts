@@ -5,14 +5,44 @@ import type { User } from './types';
 
 type Status = 'loading' | 'authenticated' | 'unauthenticated';
 
+/** Step 2 of login/sign-up: a 6-digit code was emailed. */
+export interface CodeChallenge {
+  challengeId: string;
+  email: string; // masked, e.g. "sa*****@gmail.com"
+  expiresIn: number;
+  resendIn: number;
+}
+type SessionOrCode = { token: string; user: User } | ({ otpRequired: true } & CodeChallenge);
+
 interface AuthState {
   user: User | null;
   status: Status;
   hydrate: () => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  /** Resolves to a code challenge when the email step is needed, else signs in. */
+  login: (email: string, password: string) => Promise<CodeChallenge | null>;
+  register: (name: string, email: string, password: string) => Promise<CodeChallenge | null>;
+  verifyCode: (challengeId: string, code: string) => Promise<void>;
+  resendCode: (challengeId: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
+}
+
+type SetState = (partial: Partial<AuthState>) => void;
+
+// Shared by login/register: either a session or the emailed-code step.
+async function start(set: SetState, path: string, body: object, fallback: string): Promise<CodeChallenge | null> {
+  try {
+    const { data } = await api.post<SessionOrCode>(path, body);
+    if ('otpRequired' in data) {
+      const { challengeId, email, expiresIn, resendIn } = data;
+      return { challengeId, email, expiresIn, resendIn };
+    }
+    await tokenStore.set(data.token);
+    set({ user: data.user, status: 'authenticated' });
+    return null;
+  } catch (err) {
+    throw new Error(errorMessage(err, fallback));
+  }
 }
 
 export const useAuth = create<AuthState>((set) => ({
@@ -38,27 +68,27 @@ export const useAuth = create<AuthState>((set) => ({
     }
   },
 
-  login: async (email, password) => {
+  login: (email, password) =>
+    start(set, '/auth/login', { email: email.trim(), password }, 'Kirishda xatolik yuz berdi.'),
+
+  register: (name, email, password) =>
+    start(set, '/auth/register', { name: name.trim(), email: email.trim(), password }, "Ro'yxatdan o'tishda xatolik yuz berdi."),
+
+  verifyCode: async (challengeId, code) => {
     try {
-      const { data } = await api.post<{ token: string; user: User }>('/auth/login', { email: email.trim(), password });
+      const { data } = await api.post<{ token: string; user: User }>('/auth/verify-code', { challengeId, code });
       await tokenStore.set(data.token);
       set({ user: data.user, status: 'authenticated' });
     } catch (err) {
-      throw new Error(errorMessage(err, 'Kirishda xatolik yuz berdi.'));
+      throw new Error(errorMessage(err, "Kodni tasdiqlab bo'lmadi."));
     }
   },
 
-  register: async (name, email, password) => {
+  resendCode: async (challengeId) => {
     try {
-      const { data } = await api.post<{ token: string; user: User }>('/auth/register', {
-        name: name.trim(),
-        email: email.trim(),
-        password,
-      });
-      await tokenStore.set(data.token);
-      set({ user: data.user, status: 'authenticated' });
+      await api.post('/auth/resend-code', { challengeId });
     } catch (err) {
-      throw new Error(errorMessage(err, "Ro'yxatdan o'tishda xatolik yuz berdi."));
+      throw new Error(errorMessage(err, "Kodni qayta yuborib bo'lmadi."));
     }
   },
 
