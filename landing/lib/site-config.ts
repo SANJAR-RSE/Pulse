@@ -10,7 +10,7 @@ export const TELEGRAM_URL = `https://t.me/${BOT_USERNAME}`;
 // Android build of the PULSE mobile app (Expo / EAS).
 export const APK_URL =
   process.env.NEXT_PUBLIC_APK_URL?.trim() ||
-  "https://expo.dev/artifacts/eas/Am2W6qIjOmNxCGQ_Gh-21mBEmwAWu8_nfN13VV8RvWw.apk";
+  "https://expo.dev/artifacts/eas/TUx1plbdrrw4CyXttZrAZrdg6OCPlrEPhpgksFnI-uk.apk";
 
 export const GITHUB_URL = "https://github.com/SANJAR-RSE/Pulse";
 

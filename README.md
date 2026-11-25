@@ -10,11 +10,11 @@ HealthTech ekotizimi: kundalik sog'liq kuzatuvi (suv/uyqu/mashg'ulot/dori), klin
 | 💻 Web ilova | https://pulse-web-sanjar2.vercel.app |
 | 🔌 Backend API | https://pulse-backend-co87.onrender.com/api |
 | 🤖 Telegram bot | https://t.me/pulsehakaton_bot |
-| 📱 Android ilova (APK) | **[PULSE.apk yuklab olish](https://expo.dev/artifacts/eas/Am2W6qIjOmNxCGQ_Gh-21mBEmwAWu8_nfN13VV8RvWw.apk)** |
+| 📱 Android ilova (APK) | **[PULSE.apk yuklab olish](https://expo.dev/artifacts/eas/TUx1plbdrrw4CyXttZrAZrdg6OCPlrEPhpgksFnI-uk.apk)** |
 
 ### 📱 Android ilovani o'rnatish
 
-1. Telefonda **[shu havolani](https://expo.dev/artifacts/eas/Am2W6qIjOmNxCGQ_Gh-21mBEmwAWu8_nfN13VV8RvWw.apk)** oching va `PULSE.apk` ni yuklab oling (~99 MB).
+1. Telefonda **[shu havolani](https://expo.dev/artifacts/eas/TUx1plbdrrw4CyXttZrAZrdg6OCPlrEPhpgksFnI-uk.apk)** oching va `PULSE.apk` ni yuklab oling (~99 MB).
 2. Faylni oching. Android "noma'lum manbalardan o'rnatish"ga ruxsat so'rasa — ruxsat bering.
 3. **PULSE** ilovasini oching → *Bemor sifatida* yoki *Shifokor sifatida* tugmasi bilan bir bosishda kiring.
 
