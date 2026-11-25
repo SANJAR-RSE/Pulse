@@ -3,7 +3,8 @@
 import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Activity, Loader2, Smartphone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 // Google sends the mobile app's sign-in here (redirect_uri, token in the URL
 // fragment). This page only hands the result back to the PULSE app via its
@@ -48,19 +49,19 @@ export default function GoogleCallbackPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               Bu sahifa PULSE mobil ilovasida Google orqali kirish uchun. Ilovaga qaytib, qaytadan urinib ko&apos;ring.
             </p>
-            <Button className="mt-5 w-full" nativeButton={false} render={<Link href="/login" />}>
+            <Link href="/login" className={cn(buttonVariants(), "mt-5 w-full")}>
               Saytda kirish
-            </Button>
+            </Link>
           </>
         ) : (
           <>
             <h1 className="text-lg font-semibold">PULSE ilovasiga qaytilmoqda…</h1>
             <p className="mt-1 text-sm text-muted-foreground">Ilova o&apos;zi ochilmasa, pastdagi tugmani bosing.</p>
             {target ? (
-              <Button className="mt-5 w-full gap-2" nativeButton={false} render={<a href={target} />}>
+              <a href={target} className={cn(buttonVariants(), "mt-5 w-full gap-2")}>
                 <Smartphone className="h-4 w-4" />
                 Ilovani ochish
-              </Button>
+              </a>
             ) : (
               <Loader2 className="mx-auto mt-5 h-5 w-5 animate-spin text-muted-foreground" />
             )}
