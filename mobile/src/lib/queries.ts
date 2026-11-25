@@ -60,8 +60,31 @@ export const useAddWorkout = () =>
   useHealthMutation((d: { type: string; durationMinutes: number; calories?: number }) => api.post('/health/workouts', d), ['workouts']);
 export const useAddMedication = () =>
   useHealthMutation((d: { name: string; time: string }) => api.post('/health/medications', d), ['medications']);
-export const useMarkMedicationTaken = () =>
-  useHealthMutation((id: string) => api.post(`/health/medications/${id}/taken`), ['medications']);
+// Optimistic: the intake flips to "Qabul qilindi" the moment it's tapped,
+// instead of after the refetch round-trip (it lagged the success toast by
+// 1-4 s on mobile networks). Rolled back if the request fails.
+export const useMarkMedicationTaken = () => {
+  const qc = useQueryClient();
+  type MedsData = { medications: Medication[] };
+  return useMutation({
+    mutationFn: (id: string) => api.post(`/health/medications/${id}/taken`),
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: ['medications'] });
+      const prev = qc.getQueryData<MedsData>(['medications']);
+      if (prev) {
+        qc.setQueryData<MedsData>(['medications'], {
+          ...prev,
+          medications: prev.medications.map((m) => (m._id === id ? { ...m, takenToday: true } : m)),
+        });
+      }
+      return { prev };
+    },
+    onError: (_e, _id, ctx) => {
+      if (ctx?.prev) qc.setQueryData(['medications'], ctx.prev);
+    },
+    onSettled: () => ['dashboard', 'statistics', 'medications'].forEach((k) => qc.invalidateQueries({ queryKey: [k] })),
+  });
+};
 
 // ---------- Clinics / doctors / booking ----------
 export const useClinics = () => useQuery({ queryKey: ['clinics'], queryFn: () => get<{ clinics: Clinic[] }>('/clinics') });

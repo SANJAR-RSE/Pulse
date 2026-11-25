@@ -1,3 +1,4 @@
+require('./utils/zodUz'); // Uzbek validation messages for every zod schema
 const express = require('express');
 const cors = require('cors');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');

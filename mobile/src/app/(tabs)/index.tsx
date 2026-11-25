@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AddMedicationSheet, AddSleepSheet, AddWaterSheet, AddWorkoutSheet } from '@/components/health/sheets';
 import { Button, Card, ErrorState, IconBox, Progress, Screen, SectionTitle, type IconName } from '@/components/ui';
 import { useAuth } from '@/lib/auth-store';
-import { minutesLabel, prettyDate } from '@/lib/format';
+import { minutesShort, prettyDate } from '@/lib/format';
 import { useDashboard, useNotifications } from '@/lib/queries';
 import type { DashboardData } from '@/lib/types';
 import { colors, font, radius, space } from '@/theme';
@@ -80,7 +80,7 @@ export default function DashboardScreen() {
               <Metric
                 icon="moon"
                 label="Uyqu"
-                value={data.sleep ? minutesLabel(data.sleep.durationMinutes) : '—'}
+                value={data.sleep ? minutesShort(data.sleep.durationMinutes) : '—'}
                 hint={data.sleep ? 'Bugun qayd etilgan' : 'Hali qayd etilmagan'}
                 onPress={() => router.push('/sleep')}
                 onAdd={() => setSheet('sleep')}
@@ -88,7 +88,7 @@ export default function DashboardScreen() {
               <Metric
                 icon="barbell"
                 label="Workout"
-                value={minutesLabel(data.workout.totalMinutes)}
+                value={minutesShort(data.workout.totalMinutes)}
                 hint={data.workout.totalMinutes > 0 ? "Bugungi mashg'ulot" : "Hali mashg'ulot yo'q"}
                 onPress={() => router.push('/workout')}
                 onAdd={() => setSheet('workout')}

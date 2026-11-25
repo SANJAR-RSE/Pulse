@@ -40,9 +40,12 @@ function normalize(text) {
 // Red flags: PULSE must not route these to a regular appointment — it tells
 // the user to call emergency services right away (promt.md #23, #21).
 const RED_FLAGS = [
-  /\bkokra(k|g)\w*\s*(\w+\s*)?ogri/, // ko'krak / ko'kragim og'riyapti
-  /nafas\w*\s*(ol\w*\s*)?(qiyin|qis|yetish)/,
-  /hush\w*\s*(dan\s*)?ket/,
+  // ko'krak / ko'kragim og'riyapti | siqilyapti | sanchiyapti | bosib turibdi | achishyapti
+  /\bkokra(k|g)\w*\s*(\w+\s*)?(ogri|siqil|sanch|bosi|achish)/,
+  // nafas olish qiyin | nafasim qisilyapti | nafas ololmayapman | nafasim tiqilyapti
+  /nafas\w*\s*(\w+\s*)?(qiyin|qis|yetish|ololma|olomay|bolmay|tiqil)/,
+  /\bbogil(yap|ib|di)/, // bo'g'ilyapman (choking)
+  /hush\w*\s*(\w+\s*)?(dan\s*)?(ket|yoqot)/,
   /qon\s*ket/,
   /(falaj|tutqanoq|insult|infarkt)/,
   /(yuz|qol|oyog)\w*\s*(\w+\s*)?(uvish|qimirla)/,

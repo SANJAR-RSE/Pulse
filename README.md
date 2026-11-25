@@ -8,7 +8,7 @@ HealthTech ekotizimi: kundalik sog'liq kuzatuvi (suv/uyqu/mashg'ulot/dori), klin
 |---|---|
 | 🌐 Landing | https://pulse-landing-sanjar2.vercel.app |
 | 💻 Web ilova | https://pulse-web-sanjar2.vercel.app |
-| 🔌 Backend API | https://pulse-backend-co87.onrender.com/api |
+| 🔌 Backend API | https://pulse-backend-co87.onrender.com/api (holat: [/api/health-check](https://pulse-backend-co87.onrender.com/api/health-check)) |
 | 🤖 Telegram bot | https://t.me/pulsehakaton_bot |
 | 📱 Android ilova (APK) | **[PULSE.apk yuklab olish](https://expo.dev/artifacts/eas/TUx1plbdrrw4CyXttZrAZrdg6OCPlrEPhpgksFnI-uk.apk)** |
 

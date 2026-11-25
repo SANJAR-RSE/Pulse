@@ -144,7 +144,7 @@ const addSleep = asyncHandler(async (req, res) => {
   const log = await SleepLog.findOneAndUpdate(
     { user: req.user._id, date },
     { user: req.user._id, date, sleepTime, wakeTime, durationMinutes },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   );
   res.status(201).json({ log });
 });
@@ -215,7 +215,7 @@ const logMedicationTaken = asyncHandler(async (req, res) => {
   const log = await MedicationLog.findOneAndUpdate(
     { medication: medication._id, date },
     { medication: medication._id, user: req.user._id, date, taken: true, takenAt: new Date() },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   );
   res.json({ log });
 });

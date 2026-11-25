@@ -43,6 +43,14 @@ export function minutesLabel(min: number): string {
   return `${h} soat ${m} daq`;
 }
 
+// Short form for the half-width dashboard tiles: "7 soat 20 daq" doesn't fit
+// at ~390px ("7 soat 20 d..."), so show "7.3 soat" — same as the goals card.
+export function minutesShort(min: number): string {
+  if (min < 60) return `${min} daq`;
+  const h = min / 60;
+  return `${Number.isInteger(h) ? h : h.toFixed(1)} soat`;
+}
+
 export function timeAgo(iso: string): string {
   const diff = Math.max(0, Date.now() - new Date(iso).getTime());
   const min = Math.floor(diff / 60000);
