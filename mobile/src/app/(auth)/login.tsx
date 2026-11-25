@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AuthShell } from '@/components/auth-shell';
 import { CodeStep } from '@/components/code-step';
+import { GoogleButton } from '@/components/google-button';
 import { Button, Input } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
 import { useAuth, type CodeChallenge } from '@/lib/auth-store';
@@ -66,6 +67,7 @@ export default function LoginScreen() {
       <Input label="Email" value={email} onChangeText={setEmail} placeholder="siz@gmail.com" autoCapitalize="none" autoComplete="email" keyboardType="email-address" error={errors.email} />
       <Input label="Parol" value={password} onChangeText={setPassword} placeholder="••••••••" secureTextEntry autoComplete="password" error={errors.password} onSubmitEditing={() => signIn(email, password, 'form')} />
       <Button title="Tizimga kirish" size="lg" loading={loading === 'form'} disabled={!!loading} onPress={() => signIn(email, password, 'form')} />
+      <GoogleButton label="Google bilan kirish" disabled={!!loading} onSignedIn={() => toast({ type: 'success', title: 'Xush kelibsiz!' })} />
 
       <View style={styles.divider}>
         <View style={styles.line} />

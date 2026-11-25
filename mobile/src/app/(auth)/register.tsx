@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Text } from 'react-native';
 import { AuthShell } from '@/components/auth-shell';
 import { CodeStep } from '@/components/code-step';
+import { GoogleButton } from '@/components/google-button';
 import { Button, Input } from '@/components/ui';
 import { useToast } from '@/components/ui/toast';
 import { useAuth, type CodeChallenge } from '@/lib/auth-store';
@@ -62,6 +63,7 @@ export default function RegisterScreen() {
       <Input label="Email" value={email} onChangeText={setEmail} placeholder="siz@gmail.com" autoCapitalize="none" keyboardType="email-address" autoComplete="email" error={errors.email} />
       <Input label="Parol" value={password} onChangeText={setPassword} placeholder="Kamida 6 belgi" secureTextEntry autoComplete="new-password" error={errors.password} onSubmitEditing={submit} />
       <Button title="Hisob yaratish" size="lg" onPress={submit} loading={loading} />
+      <GoogleButton label="Google bilan ro'yxatdan o'tish" disabled={loading} onSignedIn={() => toast({ type: 'success', title: "Ro'yxatdan muvaffaqiyatli o'tdingiz!" })} />
     </AuthShell>
   );
 }

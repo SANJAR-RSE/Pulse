@@ -34,7 +34,14 @@ const verifySchema = z.object({
 });
 
 const resendSchema = z.object({ challengeId: verifySchema.shape.challengeId });
-const googleSchema = z.object({ credential: z.string().min(20, 'Google javobi noto\'g\'ri.') });
+const googleSchema = z.object({
+  credential: z.string().min(20, 'Google javobi noto\'g\'ri.'),
+  // Mobile only: the secret whose SHA-256 the app sent to Google as `nonce`.
+  nonce: z.string().min(32).max(128).optional(),
+});
+
+const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
+const sameText = (a, b) => a.length === b.length && crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
 function signToken(user) {
   return jwt.sign({ sub: user._id.toString(), role: user.role }, process.env.JWT_SECRET, {
@@ -185,7 +192,7 @@ const resendCode = asyncHandler(async (req, res) => {
 const google = asyncHandler(async (req, res) => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   if (!clientId) throw new ApiError(503, 'Google orqali kirish hozircha sozlanmagan.');
-  const { credential } = googleSchema.parse(req.body);
+  const { credential, nonce } = googleSchema.parse(req.body);
 
   let info;
   try {
@@ -195,6 +202,11 @@ const google = asyncHandler(async (req, res) => {
   }
   const verified = info.email_verified === true || info.email_verified === 'true';
   if (info.aud !== clientId || !['accounts.google.com', 'https://accounts.google.com'].includes(info.iss) || !verified || !info.email) {
+    throw new ApiError(401, 'Google tasdiqlovi yaroqsiz. Qaytadan urinib ko\'ring.');
+  }
+  // Mobile tokens carry sha256(secret) as nonce; only the app that started the
+  // sign-in knows the secret, so a token caught on its way back is useless.
+  if (info.nonce && !(nonce && sameText(sha256(nonce), String(info.nonce)))) {
     throw new ApiError(401, 'Google tasdiqlovi yaroqsiz. Qaytadan urinib ko\'ring.');
   }
 

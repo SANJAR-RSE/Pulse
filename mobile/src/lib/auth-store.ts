@@ -23,6 +23,8 @@ interface AuthState {
   register: (name: string, email: string, password: string) => Promise<CodeChallenge | null>;
   verifyCode: (challengeId: string, code: string) => Promise<void>;
   resendCode: (challengeId: string) => Promise<void>;
+  /** Signs in with a Google ID token bound to `nonce` (see google-auth.ts). */
+  loginWithGoogle: (credential: string, nonce: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
 }
@@ -89,6 +91,16 @@ export const useAuth = create<AuthState>((set) => ({
       await api.post('/auth/resend-code', { challengeId });
     } catch (err) {
       throw new Error(errorMessage(err, "Kodni qayta yuborib bo'lmadi."));
+    }
+  },
+
+  loginWithGoogle: async (credential, nonce) => {
+    try {
+      const { data } = await api.post<{ token: string; user: User }>('/auth/google', { credential, nonce });
+      await tokenStore.set(data.token);
+      set({ user: data.user, status: 'authenticated' });
+    } catch (err) {
+      throw new Error(errorMessage(err, "Google orqali kirib bo'lmadi."));
     }
   },
 
