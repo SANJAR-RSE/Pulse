@@ -16,6 +16,7 @@ const medicalRecordRoutes = require('./routes/medicalRecord.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const emergencyRoutes = require('./routes/emergency.routes');
 const aiRoutes = require('./routes/ai.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/medical-records', medicalRecordRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/emergency', emergencyRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

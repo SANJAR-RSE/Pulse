@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, LogOut } from "lucide-react";
-import { NAV_ITEMS } from "@/lib/nav";
+import { navFor } from "@/lib/nav";
 import { useAuthStore } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
 
-  const items = NAV_ITEMS.filter(
-    (item) => !item.roles || item.roles.includes(user?.role ?? "patient")
-  );
+  const items = navFor(user?.role);
 
   const initials = user?.name
     ? user.name

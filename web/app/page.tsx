@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { homePath } from "@/lib/nav";
 import { LoadingState } from "@/components/shared/loading-state";
 
 export default function RootPage() {
-  const { status, hydrate } = useAuthStore();
+  const { status, hydrate, user } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -14,9 +15,9 @@ export default function RootPage() {
   }, [status, hydrate]);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/dashboard");
+    if (status === "authenticated") router.replace(homePath(user?.role));
     if (status === "unauthenticated") router.replace("/login");
-  }, [status, router]);
+  }, [status, user, router]);
 
   return (
     <div className="flex min-h-dvh items-center justify-center">

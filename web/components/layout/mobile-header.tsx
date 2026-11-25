@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Activity, LogOut, Menu } from "lucide-react";
-import { NAV_ITEMS } from "@/lib/nav";
+import { navFor } from "@/lib/nav";
 import { useAuthStore } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";import { Button } from "@/components/ui/button";
 import {
@@ -19,9 +19,7 @@ export function MobileHeader() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
 
-  const items = NAV_ITEMS.filter(
-    (item) => !item.roles || item.roles.includes(user?.role ?? "patient")
-  );
+  const items = navFor(user?.role);
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-card/95 px-4 backdrop-blur lg:hidden">

@@ -135,9 +135,19 @@ async function seed() {
   doctorDoc.user = doctorUser._id;
   await doctorDoc.save();
 
+  // Admin sees every user's name/email — use ADMIN_PASSWORD on shared/prod DBs.
+  const adminPassword = process.env.ADMIN_PASSWORD || 'password123';
+  await User.create({
+    name: 'PULSE Admin',
+    email: process.env.ADMIN_EMAIL || 'admin@pulse.demo',
+    passwordHash: await bcrypt.hash(adminPassword, 10),
+    role: 'admin',
+  });
+
   console.log('[seed] Done.');
   console.log('[seed] Demo patient login: patient@pulse.demo / password123');
   console.log('[seed] Demo doctor login:  doctor@pulse.demo / password123');
+  console.log(`[seed] Admin login:        ${process.env.ADMIN_EMAIL || 'admin@pulse.demo'} / ${process.env.ADMIN_PASSWORD ? '(ADMIN_PASSWORD)' : 'password123'}`);
 
   await disconnectDB();
   process.exit(0);

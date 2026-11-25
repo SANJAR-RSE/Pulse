@@ -255,3 +255,62 @@ export interface DoctorPanelQueueEntry {
 
 export const SAFETY_NOTICE =
   "Men shifokor o'rnini bosa olmayman. Tegishli shifokor yoki tibbiy yordamga murojaat qiling.";
+
+// ---- Admin panel ----
+export interface AdminOverview {
+  today: string;
+  users: {
+    total: number;
+    patients: number;
+    doctors: number;
+    admins: number;
+    newThisWeek: number;
+    newLastWeek: number;
+    telegramLinked: number;
+    activeThisWeek: number;
+  };
+  appointments: {
+    total: number;
+    today: number;
+    upcoming: number;
+    thisWeek: number;
+    lastWeek: number;
+    byStatus: Record<"pending" | "confirmed" | "completed" | "cancelled", number>;
+  };
+  queueToday: { waiting: number; called: number; completed: number; cancelled: number };
+  clinical: { records: number; prescriptions: number; aiQuestions: number; notifications: number };
+  health: { waterLogs: number; sleepLogs: number; workouts: number };
+  catalog: { doctors: number; clinics: number; departments: number };
+  series: { date: string; users: number; appointments: number }[];
+  topDoctors: { _id: string; name: string; specialty: string; count: number }[];
+  topDepartments: { _id: string; name: string; count: number }[];
+}
+
+export interface AdminUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: Role;
+  createdAt: string;
+  telegramLinked: boolean;
+  appointments: number;
+}
+
+export interface AdminUsersPage {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  pages: number;
+}
+
+export interface AdminAppointment {
+  _id: string;
+  date: string;
+  time: string;
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+  createdAt: string;
+  patient?: { _id: string; name: string; email: string } | null;
+  doctor?: { _id: string; firstName: string; lastName: string; specialty: string } | null;
+  department?: { _id: string; name: string } | null;
+  clinic?: { _id: string; name: string } | null;
+}

@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Activity, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth-store";
+import { homePath } from "@/lib/nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,12 +23,12 @@ type FormValues = z.infer<typeof schema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, status } = useAuthStore();
+  const { login, status, user } = useAuthStore();
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/dashboard");
-  }, [status, router]);
+    if (status === "authenticated") router.replace(homePath(user?.role));
+  }, [status, user, router]);
 
   const {
     register,
@@ -40,7 +41,7 @@ export default function LoginPage() {
     try {
       await login(values.email, values.password);
       toast.success("Xush kelibsiz!");
-      router.replace("/dashboard");
+      router.replace(homePath(useAuthStore.getState().user?.role));
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Kirishda xatolik yuz berdi.");
     } finally {

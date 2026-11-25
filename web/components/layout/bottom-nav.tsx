@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS } from "@/lib/nav";
+import { navFor } from "@/lib/nav";
+import { useAuthStore } from "@/lib/auth-store";
 import { cn } from "@/lib/utils";
 
 export function BottomNav() {
   const pathname = usePathname();
-  const items = NAV_ITEMS.filter((item) => item.inBottomNav);
+  const role = useAuthStore((s) => s.user?.role);
+  const items = navFor(role).filter((item) => item.inBottomNav);
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border bg-card/95 backdrop-blur lg:hidden">
